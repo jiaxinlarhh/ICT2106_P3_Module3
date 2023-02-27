@@ -26,122 +26,46 @@ const TestBarChart = () => {
       },
     ],
   };
-  console.log("TestBarChart");
+
   return (
     <div className="row">
       <Bar data={data} />
     </div>
   );
 };
+
 export default class DonorDashboard extends React.Component {
   state = {
-    content: null,
-    headers: [],
     loading: true,
-    settings: {},
-    error: "",
+    donations: [],
   };
 
-  settings = {
-    title: "DonorDashboard",
-    primaryColor: "#a6192e",
-    accentColor: "#94795d",
-    textColor: "#ffffff",
-    textColorInvert: "#606060",
-    api: "/api/Donor/",
+  componentDidMount = async () => {
+    await this.getDonations()
+      .then((response) => {
+        if (response.success) {
+          console.log(response);
+          this.setState({
+            donations: response.data,
+            loading: false,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({ error: error.message, loading: false });
+      });
   };
 
-  async componentDidMount() {
-    await this.getContent().then((content) => {
-      console.log(content);
-      this.setState({
-        content: content,
-      });
-    });
-
-    await this.getSettings().then((settings) => {
-      console.log(settings);
-      this.setState({
-        settings: settings,
-      });
-    });
-
-    this.setState({
-      loading: false,
-    });
-  }
-
-  getSettings = async () => {
-    // fetches http://...:5001/api/User/Settings
-    return fetch(this.settings.api + "Settings", {
+  getDonations = async () => {
+    var loggedInVol = this.props.user.data;
+    console.log(loggedInVol.UserId);
+    return fetch("/api/DonorDashboard/GetByDonorId/" + loggedInVol.UserId, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((res) => {
-      console.log(res);
-      return res.json();
-    });
-  };
-
-  getContent = async () => {
-    return fetch(this.settings.api + "All", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      console.log(res);
-      //Res = {success: true, message: "Success", data: Array(3)}
-      return res.json();
-    });
-  };
-
-  update = async (data) => {
-    console.log(data);
-    return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then(async (res) => {
-      return res.json();
-    });
-  };
-
-  handleUpdate = async (data) => {
-    await this.update(data).then((content) => {
-      if (content.success) {
-        this.setState({
-          error: "",
-        });
-        return true;
-      } else {
-        this.setState({
-          error: content.message,
-        });
-        return false;
-      }
-    });
-  };
-
-  requestRefresh = async () => {
-    this.setState({
-      loading: true,
-    });
-    await this.getContent().then((content) => {
-      console.log(content);
-      this.setState({
-        content: content,
-        loading: false,
-      });
-    });
-  };
-
-  requestError = async (error) => {
-    this.setState({
-      error: error,
+    }).then((response) => {
+      return response.json();
     });
   };
 
@@ -191,7 +115,14 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaMoneyBillWave className="mr-2 icon-style" />
-                <CardTitle className="card-title">$100 000</CardTitle>
+                <CardTitle className="card-title">
+                  $
+                  {this.state.donations.reduce(
+                    (total, donation) =>
+                      total + Number(donation.DonationAmount),
+                    0
+                  )}
+                </CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Total Donations
                 </CardSubtitle>
@@ -200,7 +131,9 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaTrophy className="mr-2 icon-style" />
-                <CardTitle className="card-title">$10 000</CardTitle>
+                <CardTitle className="card-title">
+                  {/* Get highest donation */}$ ???
+                </CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Highest Donation
                 </CardSubtitle>
@@ -209,7 +142,14 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaChartLine className="mr-2 icon-style" />
-                <CardTitle className="card-title">$50</CardTitle>
+                <CardTitle className="card-title">
+                  ${/* Get average donations */}
+                  {this.state.donations.reduce(
+                    (total, donation) =>
+                      total + Number(donation.DonationAmount),
+                    0
+                  ) / this.state.donations.length}
+                </CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Average Donation
                 </CardSubtitle>
@@ -218,9 +158,11 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaProjectDiagram className="mr-2 icon-style" />
-                <CardTitle className="card-title">#5</CardTitle>
+                <CardTitle className="card-title">
+                  # {this.state.donations.length}
+                </CardTitle>
                 <CardSubtitle className="card-subtitle">
-                  Number of Projects Donated
+                  Number of Donations Made
                 </CardSubtitle>
               </CardBody>
             </Card>
@@ -231,12 +173,6 @@ export default class DonorDashboard extends React.Component {
               <Card>
                 <CardBody>
                   <h3 className="text-start p-5">Donation Analysis</h3>
-                  {/* <img
-                    className="card-img"
-                    src={BarChart}
-                    height={420}
-                    alt="Card image"
-                  ></img> */}
                   <TestBarChart />
                 </CardBody>
               </Card>
@@ -317,49 +253,23 @@ export default class DonorDashboard extends React.Component {
                   <table className="table">
                     <thead>
                       <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Amount</th>
+                        <th>Donation Type</th>
+                        <th>Donation Amount</th>
+                        <th>Donation Constraint</th>
+                        <th>Donation Date</th>
+                        <th>Project Id</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Project X</td>
-                        <td>Online</td>
-                        <td>06/02/2023</td>
-                        <td>$2000</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Project B</td>
-                        <td>Cash</td>
-                        <td>06/02/2023</td>
-                        <td>$2000</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Project A</td>
-                        <td>Online</td>
-                        <td>06/02/2023</td>
-                        <td>$2000</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">4</th>
-                        <td>Project A</td>
-                        <td>Online</td>
-                        <td>06/02/2023</td>
-                        <td>$2000</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">5</th>
-                        <td>Project A</td>
-                        <td>Online</td>
-                        <td>06/02/2023</td>
-                        <td>$2000</td>
-                      </tr>
+                      {this.state.donations.map((donation) => (
+                        <tr key={donation.DonationsId}>
+                          <td>{donation.DonationType}</td>
+                          <td>{donation.DonationAmount}</td>
+                          <td>{donation.DonationConstraint}</td>
+                          <td>{donation.DonationDate}</td>
+                          <td>{donation.ProjectId}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

@@ -14,10 +14,12 @@ namespace YouthActionDotNet.Control{
     public class DonationsControl: IUserInterfaceCRUD<Donations>
     {
         // Initialize the Generic Repositories
-        private GenericRepositoryIn<Donations> DonationsRepositoryIn;
-        private GenericRepositoryOut<Donations> DonationsRepositoryOut;
         private GenericRepositoryOut<Donor> DonorRepositoryOut;
         private GenericRepositoryOut<Project> ProjectRepositoryOut;
+
+        private DonationsRepoIn donationsRepoIn;
+        private DonationsRepoOut donationsRepoOut;
+
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -26,57 +28,68 @@ namespace YouthActionDotNet.Control{
         // Constructor
         public DonationsControl(DBContext context)
         {
-            DonationsRepositoryIn = new GenericRepositoryIn<Donations>(context);
-            DonationsRepositoryOut = new GenericRepositoryOut<Donations>(context);
             DonorRepositoryOut = new GenericRepositoryOut<Donor>(context);
             ProjectRepositoryOut = new GenericRepositoryOut<Project>(context);
+
+            donationsRepoIn = new DonationsRepoIn(context);
+            donationsRepoOut = new DonationsRepoOut(context);
+        }
+
+        // Return all Donations by Donor ID
+         public async Task<ActionResult<string>> GetByDonorId(string id){
+            var donations = await donationsRepoOut.GetByDonorId(id);
+            if (donations == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donations Not Found" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
 
         // Return all Donations
         public async Task<ActionResult<string>> All()
         {
-            var donations = await DonationsRepositoryOut.GetAllAsync();
+            var donations = await donationsRepoOut.GetAllAsync();
             return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
         }
 
         // Create a Donations
         public async Task<ActionResult<string>> Create(Donations template)
         {
-            await DonationsRepositoryIn.InsertAsync(template);
-            var createdDonations = await DonationsRepositoryOut.GetByIDAsync(template.DonationsId);
+            await donationsRepoIn.InsertAsync(template);
+            var createdDonations = await donationsRepoOut.GetByIDAsync(template.DonationsId);
             return JsonConvert.SerializeObject(new {success = true, data = createdDonations}, settings);
         }
 
         // Delete a Donations by ID
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var donations = await DonationsRepositoryOut.GetByIDAsync(id);
+            var donations = await donationsRepoOut.GetByIDAsync(id);
             if (donations == null)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
             }
 
-            await DonationsRepositoryIn.DeleteAsync(donations);
+            await donationsRepoIn.DeleteAsync(donations);
             return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
         }
 
         // Delete a Donations by object
         public async Task<ActionResult<string>> Delete(Donations template)
         {
-            var donations = await DonationsRepositoryOut.GetByIDAsync(template.DonationsId);
+            var donations = await donationsRepoOut.GetByIDAsync(template.DonationsId);
             if (donations == null)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
             }
 
-            await DonationsRepositoryIn.DeleteAsync(donations);
+            await donationsRepoIn.DeleteAsync(donations);
             return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
         }
 
         // Check if a Donations exists by ID
         public bool Exists(string id)
         {
-            if (DonationsRepositoryOut.GetByIDAsync(id) != null)
+            if (donationsRepoOut.GetByIDAsync(id) != null)
             {
                 return true;
             }
@@ -86,7 +99,7 @@ namespace YouthActionDotNet.Control{
         // Get a Donations by ID
         public async Task<ActionResult<string>> Get(string id)
         {
-            var donations = await DonationsRepositoryOut.GetByIDAsync(id);
+            var donations = await donationsRepoOut.GetByIDAsync(id);
             if (donations == null)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
@@ -142,7 +155,7 @@ namespace YouthActionDotNet.Control{
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }
-            await DonationsRepositoryIn.UpdateAsync(template);
+            await donationsRepoIn.UpdateAsync(template);
             try{
                 return await Get(id);
             }catch (DbUpdateConcurrencyException)
@@ -165,7 +178,7 @@ namespace YouthActionDotNet.Control{
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }
-            await DonationsRepositoryIn.UpdateAsync(template);
+            await donationsRepoIn.UpdateAsync(template);
             try{
                 return await All();
             }catch (DbUpdateConcurrencyException)

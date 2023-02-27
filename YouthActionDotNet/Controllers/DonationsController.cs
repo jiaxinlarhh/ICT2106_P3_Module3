@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,24 @@ namespace YouthActionDotNet.Controllers{
         // Private Instance
         private DonationsControl donationsControl;
 
+         JsonSerializerSettings settings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
+
+
         // Constructor
         public DonationsController(DBContext context)
         {
             donationsControl = new DonationsControl(context);
+        }
+
+        [HttpGet("GetByDonorId/{id}")]
+        public async Task<ActionResult<string>> GetByDonorId(string id)
+        {
+            Console.WriteLine("GetByDonorId");
+            Console.WriteLine(id);
+            return await donationsControl.GetByDonorId(id);
         }
 
         // Retrieve all donations
