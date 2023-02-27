@@ -13,6 +13,7 @@ namespace YouthActionDotNet.Control{
 
     public class DonationsControl: IUserInterfaceCRUD<Donations>
     {
+        // Initialize the Generic Repositories
         private GenericRepositoryIn<Donations> DonationsRepositoryIn;
         private GenericRepositoryOut<Donations> DonationsRepositoryOut;
         private GenericRepositoryOut<Donor> DonorRepositoryOut;
@@ -22,6 +23,7 @@ namespace YouthActionDotNet.Control{
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
+        // Constructor
         public DonationsControl(DBContext context)
         {
             DonationsRepositoryIn = new GenericRepositoryIn<Donations>(context);
@@ -29,17 +31,23 @@ namespace YouthActionDotNet.Control{
             DonorRepositoryOut = new GenericRepositoryOut<Donor>(context);
             ProjectRepositoryOut = new GenericRepositoryOut<Project>(context);
         }
+
+        // Return all Donations
         public async Task<ActionResult<string>> All()
         {
             var donations = await DonationsRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
         }
+
+        // Create a Donations
         public async Task<ActionResult<string>> Create(Donations template)
         {
             await DonationsRepositoryIn.InsertAsync(template);
             var createdDonations = await DonationsRepositoryOut.GetByIDAsync(template.DonationsId);
             return JsonConvert.SerializeObject(new {success = true, data = createdDonations}, settings);
         }
+
+        // Delete a Donations by ID
         public async Task<ActionResult<string>> Delete(string id)
         {
             var donations = await DonationsRepositoryOut.GetByIDAsync(id);
@@ -51,6 +59,8 @@ namespace YouthActionDotNet.Control{
             await DonationsRepositoryIn.DeleteAsync(donations);
             return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
         }
+
+        // Delete a Donations by object
         public async Task<ActionResult<string>> Delete(Donations template)
         {
             var donations = await DonationsRepositoryOut.GetByIDAsync(template.DonationsId);
@@ -63,6 +73,7 @@ namespace YouthActionDotNet.Control{
             return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
         }
 
+        // Check if a Donations exists by ID
         public bool Exists(string id)
         {
             if (DonationsRepositoryOut.GetByIDAsync(id) != null)
@@ -71,6 +82,8 @@ namespace YouthActionDotNet.Control{
             }
             return false;
         }
+
+        // Get a Donations by ID
         public async Task<ActionResult<string>> Get(string id)
         {
             var donations = await DonationsRepositoryOut.GetByIDAsync(id);
@@ -81,6 +94,7 @@ namespace YouthActionDotNet.Control{
             return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
         }
 
+        // Settings for Donations
         public string Settings()
         {   
             Settings settings = new Settings();
@@ -120,6 +134,8 @@ namespace YouthActionDotNet.Control{
             //Todo: Add settings
             return JsonConvert.SerializeObject(new {success = true, data = settings});
         }
+
+        // Update a Donations
         public async Task<ActionResult<string>> Update(string id, Donations template)
         {
             if(id != template.DonationsId)
@@ -141,6 +157,8 @@ namespace YouthActionDotNet.Control{
                 }
             }
         }
+
+        // Update a Donations and return all
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Donations template)
         {
             if(id != template.DonationsId)
