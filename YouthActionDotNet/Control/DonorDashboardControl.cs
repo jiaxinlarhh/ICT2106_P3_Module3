@@ -16,6 +16,7 @@ namespace YouthActionDotNet.Control
     {
         private DonationsRepoIn donationsRepoIn;
         private DonationsRepoOut donationsRepoOut;
+        private GenericRepositoryOut<Project> projectRepositoryOut;
       
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
@@ -26,9 +27,11 @@ namespace YouthActionDotNet.Control
         {
             donationsRepoIn = new DonationsRepoIn(context);
             donationsRepoOut = new DonationsRepoOut(context);
+            projectRepositoryOut = new GenericRepositoryOut<Project>(context);
            
         }
 
+        /** Get all donations by donor id **/
         public async Task<ActionResult<string>> GetByDonorId(string id){
             var donations = await donationsRepoOut.GetByDonorId(id);
             if (donations == null)
@@ -37,5 +40,16 @@ namespace YouthActionDotNet.Control
             }
             return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
+
+        /** Create Donation **/
+        public async Task<ActionResult<string>> CreateDonation(string donorId, string donationType, string donationConstraint, string donationAmount, string projectId){
+            var donation = await donationsRepoIn.CreateDonation(donorId, donationType, donationConstraint, donationAmount, projectId);
+            if (donation == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donation Not Created" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donation, message = "Donation Successfully Created" });
+        }
+
     }
 }

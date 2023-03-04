@@ -1,8 +1,8 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import { Loading } from "../../Components/appCommon";
-import DatapageLayout from "../PageLayout";
 import "../../styles/donorDashboard.css";
-import { Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
+import { Card, CardBody, CardTitle, CardSubtitle, Table } from "reactstrap";
 import {
   FaMoneyBillWave,
   FaTrophy,
@@ -11,18 +11,76 @@ import {
 } from "react-icons/fa";
 
 import Chart from "chart.js/auto";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 
-const TestBarChart = () => {
-  const labels = ["January", "February", "March", "April", "May", "June"];
+// const DonationBarChart = ({ donations }) => {
+//   const labels = [
+//     "January",
+//     "February",
+//     "March",
+//     "April",
+//     "May",
+//     "June",
+//     "July",
+//     "August",
+//     "September",
+//     "October",
+//     "November",
+//     "December",
+//   ];
+
+//   const data = {
+//     labels: labels,
+//     datasets: [
+//       {
+//         label: "Donations",
+//         data: donations.map((donation) => donation.DonationAmount),
+//         fill: false,
+//         backgroundColor: "rgb(255, 99, 132)",
+//         borderColor: "rgba(255, 99, 132, 0.2)",
+//       },
+//     ],
+//   };
+
+//   return (
+//     <div className="row">
+//       <Bar data={data} />
+//     </div>
+//   );
+// };
+
+const DonationBarChart = ({ donations }) => {
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthlyTotals = Array.from({ length: 12 }, () => 0); // initialize array with 12 zeros
+
+  donations.forEach((donation) => {
+    const month = new Date(donation.DonationDate).getMonth(); // extract month from donation date
+    monthlyTotals[month] += parseInt(donation.DonationAmount); // add donation amount to corresponding month's total
+  });
+
   const data = {
     labels: labels,
     datasets: [
       {
-        label: "My First dataset",
+        label: "Donations",
+        data: monthlyTotals,
+        fill: false,
         backgroundColor: "rgb(255, 99, 132)",
-        borderColor: "rgb(255, 99, 132)",
-        data: [0, 10, 5, 2, 20, 30, 45],
+        borderColor: "rgba(255, 99, 132, 0.2)",
       },
     ],
   };
@@ -38,6 +96,7 @@ export default class DonorDashboard extends React.Component {
   state = {
     loading: true,
     donations: [],
+    projects: [],
   };
 
   componentDidMount = async () => {
@@ -54,6 +113,21 @@ export default class DonorDashboard extends React.Component {
       .catch((error) => {
         this.setState({ error: error.message, loading: false });
       });
+
+    await this.getProjects()
+      .then((response) => {
+        if (response.success) {
+          console.log(response);
+          this.setState({
+            projects: response.data,
+            loading: false,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({ error: error.message, loading: false });
+      });
   };
 
   getDonations = async () => {
@@ -65,6 +139,18 @@ export default class DonorDashboard extends React.Component {
         "Content-Type": "application/json",
       },
     }).then((response) => {
+      return response.json();
+    });
+  };
+
+  getProjects = async () => {
+    return fetch("/api/Project/All", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      console.log(response);
       return response.json();
     });
   };
@@ -173,7 +259,7 @@ export default class DonorDashboard extends React.Component {
               <Card>
                 <CardBody>
                   <h3 className="text-start p-5">Donation Analysis</h3>
-                  <TestBarChart />
+                  <DonationBarChart donations={this.state.donations} />
                 </CardBody>
               </Card>
             </div>
@@ -187,54 +273,16 @@ export default class DonorDashboard extends React.Component {
                       View All
                     </a>
                   </div>
-                  {/*project name and project description and button (center align) align */}
-                  <div className="d-flex justify-content-between mb-5">
-                    <div className="d-flex flex-column">
-                      <h5>Project 1</h5>
-                      <p className="text-muted">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </div>
-                    <a href="/DonorProjectDetails" className="btn view-details">
-                      View
-                    </a>
-                  </div>
-
-                  <div className="d-flex justify-content-between mb-5">
-                    <div className="d-flex flex-column">
-                      <h5>Project 1</h5>
-                      <p className="text-muted">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </div>
-                    <a href="/DonorProjectDetails" className="btn view-details">
-                      View
-                    </a>
-                  </div>
-
-                  <div className="d-flex justify-content-between mb-5">
-                    <div className="d-flex flex-column">
-                      <h5>Project 1</h5>
-                      <p className="text-muted">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
-                      </p>
-                    </div>
-                    <a href="/DonorProjectDetails" className="btn view-details">
-                      View
-                    </a>
-                  </div>
+                  {this.state.projects
+                    .slice(Math.max(this.state.projects.length - 4, 0))
+                    .map((project) => (
+                      <div className="d-flex justify-content-between">
+                        <div className="d-flex flex-column">
+                          <h5>{project.ProjectName}</h5>
+                          <p>{project.ProjectDescription}</p>
+                        </div>
+                      </div>
+                    ))}
                 </CardBody>
               </Card>
             </div>
@@ -266,7 +314,12 @@ export default class DonorDashboard extends React.Component {
                           <td>{donation.DonationType}</td>
                           <td>{donation.DonationAmount}</td>
                           <td>{donation.DonationConstraint}</td>
-                          <td>{donation.DonationDate}</td>
+                          <td>
+                            {" "}
+                            {donation.DonationDate
+                              ? donation.DonationDate.substring(0, 10)
+                              : ""}
+                          </td>
                           <td>{donation.ProjectId}</td>
                         </tr>
                       ))}

@@ -19,5 +19,6 @@ namespace YouthActionDotNet.DAL
         public async Task<List<Donations>> GetByDonorId(string id){
             return await dbSet.Where(d => d.DonorId == id).ToListAsync();
         }
+
     }
 }
