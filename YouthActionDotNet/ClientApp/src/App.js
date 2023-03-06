@@ -285,7 +285,7 @@ export default function App() {
               }
             />
             <Route
-              path="/Donate/:id"
+              path="/donate/:id"
               element={<Donate user={token} permissions={parsedPerms}></Donate>}
             />
             <Route
