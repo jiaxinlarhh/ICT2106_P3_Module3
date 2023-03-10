@@ -29,7 +29,6 @@ namespace YouthActionDotNet.Controllers
             donorDashboardControl = new DonorDashboardControl(context);
         }
 
-       
 
         /** Get all donations by donor id **/
         [HttpGet("GetByDonorId/{id}")]
@@ -39,20 +38,6 @@ namespace YouthActionDotNet.Controllers
             Console.WriteLine(id);
             return await donorDashboardControl.GetByDonorId(id);
         }
-
-        /** Create Donation **/
-        [HttpPost("CreateDonation")]
-        public async Task<ActionResult<string>> CreateDonation(string donorId, string donationType, string donationConstraint, string donationAmount, string projectId)
-        {
-            Console.WriteLine("CreateDonation");
-            Console.WriteLine(donorId);
-            Console.WriteLine(donationType);
-            Console.WriteLine(donationConstraint);
-            Console.WriteLine(donationAmount);
-            Console.WriteLine(projectId);
-            return await donorDashboardControl.CreateDonation(donorId, donationType, donationConstraint, donationAmount, projectId);
-        }
-
        
 }
 }

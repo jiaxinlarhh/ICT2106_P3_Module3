@@ -6,12 +6,12 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL
 {
-    public class DonationsRepoIn : GenericRepositoryIn<Donations>
+    public class DonorRepoIn : GenericRepositoryIn<Donor>
     {   
-        public DonationsRepoIn(DBContext context) : base(context)
+        public DonorRepoIn(DBContext context) : base(context)
         {
             this.context = context;
-            this.dbSet = context.Set<Donations>();
+            this.dbSet = context.Set<Donor>();
         }
         
     }

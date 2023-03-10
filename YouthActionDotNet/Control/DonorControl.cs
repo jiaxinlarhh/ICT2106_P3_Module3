@@ -16,15 +16,15 @@ namespace YouthActionDotNet.Control
 {    public class DonorControl : IUserInterfaceCRUD<Donor>
     {
         // Initialize the Generic Repositories
-        private GenericRepositoryIn<Donor> DonorRepositoryIn;
-        private GenericRepositoryOut<Donor> DonorRepositoryOut;
+        private DonorRepoIn DonorRepositoryIn;
+        private DonorRepoOut DonorRepositoryOut;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         // Constructor
         public DonorControl(DBContext context)
         {
-            DonorRepositoryIn = new GenericRepositoryIn<Donor>(context);
-            DonorRepositoryOut = new GenericRepositoryOut<Donor>(context);
+            DonorRepositoryIn = new DonorRepoIn(context);
+            DonorRepositoryOut = new DonorRepoOut(context);
         }
 
         // Check if Donor exists
@@ -143,7 +143,7 @@ namespace YouthActionDotNet.Control
         {
             Settings settings = new UserSettings();
             settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
-             settings.ColumnSettings.Add("donorName", new ColumnHeader { displayHeader = "Donor Name" });
+            settings.ColumnSettings.Add("donorName", new ColumnHeader { displayHeader = "Donor Name" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });

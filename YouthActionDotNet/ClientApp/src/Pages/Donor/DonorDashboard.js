@@ -13,42 +13,6 @@ import {
 import Chart from "chart.js/auto";
 import { Bar, Line } from "react-chartjs-2";
 
-// const DonationBarChart = ({ donations }) => {
-//   const labels = [
-//     "January",
-//     "February",
-//     "March",
-//     "April",
-//     "May",
-//     "June",
-//     "July",
-//     "August",
-//     "September",
-//     "October",
-//     "November",
-//     "December",
-//   ];
-
-//   const data = {
-//     labels: labels,
-//     datasets: [
-//       {
-//         label: "Donations",
-//         data: donations.map((donation) => donation.DonationAmount),
-//         fill: false,
-//         backgroundColor: "rgb(255, 99, 132)",
-//         borderColor: "rgba(255, 99, 132, 0.2)",
-//       },
-//     ],
-//   };
-
-//   return (
-//     <div className="row">
-//       <Bar data={data} />
-//     </div>
-//   );
-// };
-
 const DonationBarChart = ({ donations }) => {
   const labels = [
     "January",
@@ -218,7 +182,15 @@ export default class DonorDashboard extends React.Component {
               <CardBody>
                 <FaTrophy className="mr-2 icon-style" />
                 <CardTitle className="card-title">
-                  {/* Get highest donation */}$ ???
+                  {/* Get highest donation */}$
+                  {this.state.donations.length > 0
+                    ? Math.max.apply(
+                        Math,
+                        this.state.donations.map(function (donation) {
+                          return donation.DonationAmount;
+                        })
+                      )
+                    : 0}
                 </CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Highest Donation
@@ -229,12 +201,16 @@ export default class DonorDashboard extends React.Component {
               <CardBody>
                 <FaChartLine className="mr-2 icon-style" />
                 <CardTitle className="card-title">
-                  ${/* Get average donations */}
-                  {this.state.donations.reduce(
-                    (total, donation) =>
-                      total + Number(donation.DonationAmount),
-                    0
-                  ) / this.state.donations.length}
+                  ${/* Get average donations if no donation display 0*/}
+                  {this.state.donations.length > 0
+                    ? (
+                        this.state.donations.reduce(
+                          (total, donation) =>
+                            total + Number(donation.DonationAmount),
+                          0
+                        ) / this.state.donations.length
+                      ).toFixed(2)
+                    : 0}
                 </CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Average Donation

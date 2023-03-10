@@ -14,7 +14,7 @@ namespace YouthActionDotNet.Control{
     public class DonationsControl: IUserInterfaceCRUD<Donations>
     {
         // Initialize the Generic Repositories
-        private GenericRepositoryOut<Donor> DonorRepositoryOut;
+        private DonorRepoOut DonorRepositoryOut;
         private GenericRepositoryOut<Project> ProjectRepositoryOut;
 
         private DonationsRepoIn donationsRepoIn;
@@ -28,7 +28,7 @@ namespace YouthActionDotNet.Control{
         // Constructor
         public DonationsControl(DBContext context)
         {
-            DonorRepositoryOut = new GenericRepositoryOut<Donor>(context);
+            DonorRepositoryOut = new DonorRepoOut(context);
             ProjectRepositoryOut = new GenericRepositoryOut<Project>(context);
 
             donationsRepoIn = new DonationsRepoIn(context);

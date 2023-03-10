@@ -41,15 +41,5 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
 
-        /** Create Donation **/
-        public async Task<ActionResult<string>> CreateDonation(string donorId, string donationType, string donationConstraint, string donationAmount, string projectId){
-            var donation = await donationsRepoIn.CreateDonation(donorId, donationType, donationConstraint, donationAmount, projectId);
-            if (donation == null)
-            {
-                return JsonConvert.SerializeObject(new { success = false, message = "Donation Not Created" });
-            }
-            return JsonConvert.SerializeObject(new { success = true, data = donation, message = "Donation Successfully Created" });
-        }
-
     }
 }
