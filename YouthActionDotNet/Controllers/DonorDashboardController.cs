@@ -31,13 +31,30 @@ namespace YouthActionDotNet.Controllers
 
 
         /** Get all donations by donor id **/
+        // [HttpGet("GetByDonorId/{id}")]
+        // public async Task<ActionResult<string>> GetByDonorId(string id)
+        // {
+        //     Console.WriteLine("GetByDonorId");
+        //     Console.WriteLine(id);
+        //     return await donorDashboardControl.GetByDonorId(id);
+        // }
+
         [HttpGet("GetByDonorId/{id}")]
         public async Task<ActionResult<string>> GetByDonorId(string id)
         {
             Console.WriteLine("GetByDonorId");
             Console.WriteLine(id);
-            return await donorDashboardControl.GetByDonorId(id);
+
+            var donorDashboardData = await donorDashboardControl.GetByDonorId(id);
+
+            //pass the data to the view model
+            DonorDashboardViewModel donorDashboardViewModel = new DonorDashboardViewModel();
+            donorDashboardViewModel.JSONObject = donorDashboardData;
+
+            //pass the view model to the view
+            return donorDashboardViewModel.JSONObject;
+           
         }
-       
-}
+    }
+
 }

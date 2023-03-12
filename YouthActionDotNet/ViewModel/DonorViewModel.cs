@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-public class DonorDashboardViewModel
+public class DonorViewModel
 {
     public ActionResult<string> JSONObject { get; set; }
 
