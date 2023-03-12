@@ -12,7 +12,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control
 {
-    public class ProjectControl : IUserInterfaceCRUD<Project>
+    public class ProjectControl : IUserInterfaceCRUD<Project>, IProject
     {
         private GenericRepositoryIn<Project> ProjectRepositoryIn;
         private GenericRepositoryOut<Project> ProjectRepositoryOut;
@@ -27,6 +27,12 @@ namespace YouthActionDotNet.Control
             ProjectRepositoryOut = new GenericRepositoryOut<Project>(context);
             ServiceCenterRepositoryIn = new GenericRepositoryIn<ServiceCenter>(context);
             ServiceCenterRepositoryOut = new GenericRepositoryOut<ServiceCenter>(context);
+        }
+
+        public async Task<ActionResult<string>> GetAllProjects()
+        {
+            var projects = await ProjectRepositoryOut.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
         public bool Exists(string id)

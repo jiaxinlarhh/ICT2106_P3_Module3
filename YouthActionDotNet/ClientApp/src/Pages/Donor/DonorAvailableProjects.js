@@ -12,7 +12,7 @@ function DonorAvailableProjects() {
   useEffect(() => {
     async function getProjects() {
       try {
-        const response = await fetch("/api/Project/All", {
+        const response = await fetch("/api/DonorDashboard/GetProjects", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

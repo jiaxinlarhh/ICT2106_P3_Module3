@@ -11,7 +11,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control{
 
-    public class DonationsControl: IUserInterfaceCRUD<Donations>
+    public class DonationsControl: IUserInterfaceCRUD<Donations> , IDonation
     {
         // Initialize the Generic Repositories
         private DonorRepoOut DonorRepositoryOut;
@@ -35,6 +35,8 @@ namespace YouthActionDotNet.Control{
             donationsRepoOut = new DonationsRepoOut(context);
         }
 
+        // -------For Interface IDonation----------------
+
         // Return all Donations by Donor ID
          public async Task<ActionResult<string>> GetByDonorId(string id){
             var donations = await donationsRepoOut.GetByDonorId(id);
@@ -44,6 +46,28 @@ namespace YouthActionDotNet.Control{
             }
             return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
+
+        // Return all Donations by Project ID
+        public async Task<ActionResult<string>> GetByProjectId(string id){
+            var donations = await donationsRepoOut.GetByProjectId(id);
+            if (donations == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donations Not Found" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
+        }
+
+        // Return All Donations
+        public async Task<ActionResult<string>> GetAll(){
+            var donations = await donationsRepoOut.GetAll();
+            if (donations == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donations Not Found" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
+        }
+
+        //-------------------------------------------------------------
 
         // Return all Donations
         public async Task<ActionResult<string>> All()

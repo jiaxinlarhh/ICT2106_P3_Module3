@@ -108,7 +108,7 @@ export default class DonorDashboard extends React.Component {
   };
 
   getProjects = async () => {
-    return fetch("/api/Project/All", {
+    return fetch("/api/DonorDashboard/GetProjects", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

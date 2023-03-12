@@ -30,15 +30,6 @@ namespace YouthActionDotNet.Controllers
         }
 
 
-        /** Get all donations by donor id **/
-        // [HttpGet("GetByDonorId/{id}")]
-        // public async Task<ActionResult<string>> GetByDonorId(string id)
-        // {
-        //     Console.WriteLine("GetByDonorId");
-        //     Console.WriteLine(id);
-        //     return await donorDashboardControl.GetByDonorId(id);
-        // }
-
         [HttpGet("GetByDonorId/{id}")]
         public async Task<ActionResult<string>> GetByDonorId(string id)
         {
@@ -54,6 +45,22 @@ namespace YouthActionDotNet.Controllers
             //pass the view model to the view
             return donorDashboardViewModel.JSONObject;
            
+        }
+
+        [HttpGet("GetProjects")]
+        public async Task<ActionResult<string>> GetAllProjects()
+        {
+            Console.WriteLine("GetProjects");
+
+            var donorDashboardData = await donorDashboardControl.GetAllProjects();
+
+            //pass the data to the view model
+            DonorDashboardViewModel donorDashboardViewModel = new DonorDashboardViewModel();
+            donorDashboardViewModel.JSONObject = donorDashboardData;
+
+            //pass the view model to the view
+            return donorDashboardViewModel.JSONObject;
+
         }
     }
 
