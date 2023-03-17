@@ -75,6 +75,8 @@ class Donate extends React.Component {
       DonationType: "online", // hard code its online by default
       DonorId: this.props.user.data.UserId,
       ProjectId: this.state.id,
+      //pass a extra field to indicate its a currency type
+      CurrencyType: "JPY",
     };
     // /api/Donations/
     return fetch("/api/Donations/" + "Create", {

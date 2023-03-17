@@ -20,25 +20,28 @@ namespace YouthActionDotNet.Control{
         private DonationsRepoIn donationsRepoIn;
         private DonationsRepoOut donationsRepoOut;
 
+        private readonly ICurrency _currencyConverter;
+
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
+        private DBContext context;
 
         // Constructor
-        public DonationsControl(DBContext context)
+        public DonationsControl(DBContext context, ICurrency currencyConverter)
         {
             DonorRepositoryOut = new DonorRepoOut(context);
             ProjectRepositoryOut = new GenericRepositoryOut<Project>(context);
-
             donationsRepoIn = new DonationsRepoIn(context);
             donationsRepoOut = new DonationsRepoOut(context);
+            _currencyConverter = currencyConverter;
         }
 
         // -------For Interface IDonation----------------
 
         // Return all Donations by Donor ID
-         public async Task<ActionResult<string>> GetByDonorId(string id){
+        public async Task<ActionResult<string>> GetByDonorId(string id){
             var donations = await donationsRepoOut.GetByDonorId(id);
             if (donations == null)
             {
@@ -69,6 +72,7 @@ namespace YouthActionDotNet.Control{
 
         //-------------------------------------------------------------
 
+
         // Return all Donations
         public async Task<ActionResult<string>> All()
         {
@@ -79,6 +83,15 @@ namespace YouthActionDotNet.Control{
         // Create a Donations
         public async Task<ActionResult<string>> Create(Donations template)
         {
+            //CONVERT TO STRING TO DECIMAL
+            var amount = decimal.Parse(template.DonationAmount);
+
+            // Convert the donation amount using ICurrency
+           var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "USD", "SGD");
+
+            // Set the converted amount in the Donations object
+            template.DonationAmount = convertedAmount;
+
             await donationsRepoIn.InsertAsync(template);
             var createdDonations = await donationsRepoOut.GetByIDAsync(template.DonationsId);
             return JsonConvert.SerializeObject(new {success = true, data = createdDonations}, settings);
@@ -217,5 +230,6 @@ namespace YouthActionDotNet.Control{
                 }
             }
         }
+
     }
 }

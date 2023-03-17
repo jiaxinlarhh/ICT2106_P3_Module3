@@ -17,6 +17,7 @@ namespace YouthActionDotNet.Controllers{
     {
         // Private Instance
         private DonationsControl donationsControl;
+        private ICurrency _currencyConverter;
 
          JsonSerializerSettings settings = new JsonSerializerSettings
         {
@@ -27,7 +28,9 @@ namespace YouthActionDotNet.Controllers{
         // Constructor
         public DonationsController(DBContext context)
         {
-            donationsControl = new DonationsControl(context);
+           var apiKey = "aG3kk6LNE5obzTL94EiMLD8V7M0HOsyN";
+        var currencyConverter = new CurrencyConverterAdapter(apiKey);
+        donationsControl = new DonationsControl(context, currencyConverter);
         }
 
         [HttpGet("GetByDonorId/{id}")]
