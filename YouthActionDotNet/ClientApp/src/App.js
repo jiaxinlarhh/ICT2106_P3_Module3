@@ -104,7 +104,6 @@ export default function App() {
               {token.data.Role == "Admin" &&
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
               }
-            />
             <Route
               path="/DonorAvailableProjects"
               element={
@@ -148,7 +147,7 @@ export default function App() {
               path="/Logout"
               element={
                 <Logout logout={logout} clearPerms={clearPerms}></Logout>
-              }
+              }/>
               <Route path="/Users" element={<Users user={token} permissions = {parsedPerms}/>}/>  
               <Route path="/Employees" element={<Employees user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Volunteers" element={<Volunteer user={token} permissions = {parsedPerms}/>}/>
