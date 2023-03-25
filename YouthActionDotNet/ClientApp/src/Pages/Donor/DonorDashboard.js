@@ -61,17 +61,42 @@ export default class DonorDashboard extends React.Component {
     loading: true,
     donations: [],
     projects: [],
+    monetary: [],
+    item: [],
   };
 
   componentDidMount = async () => {
     await this.getDonations()
       .then((response) => {
         if (response.success) {
-          // TODO: check if donationtype is monetary
+          var monetaryDonation = [];
+          var itemDonation = [];
+
+          console.log("Donations?: ", this.state.donations);
           this.setState({
             donations: response.data,
             loading: false,
           });
+          // for (val of this.state.donations) {
+          //   console.log(val);
+
+          // }
+
+          response.data.forEach((donation) => {
+            if (donation["DonationType"] === "Monetary") {
+              monetaryDonation.push(donation);
+            } else if (donation["DonationType"] === "Item") {
+              itemDonation.push(donation);
+            }
+          });
+
+          this.setState({
+            monetary: monetaryDonation,
+            item: itemDonation,
+          });
+
+          console.log("Monetary:", this.state.monetary);
+          console.log("Item:", this.state.item);
         }
       })
       .catch((error) => {
@@ -161,13 +186,13 @@ export default class DonorDashboard extends React.Component {
             </div>
           </div>
 
-          <div className="card-group mt-3">
+          <div className="flex flex-col justify-center md:flex-row ">
             <Card className="card-style">
               <CardBody>
                 <FaMoneyBillWave className="mr-2 icon-style" />
                 <CardTitle className="card-title">
                   $
-                  {this.state.donations.reduce(
+                  {this.state.monetary.reduce(
                     (total, donation) =>
                       total + Number(donation.DonationAmount),
                     0
@@ -183,10 +208,10 @@ export default class DonorDashboard extends React.Component {
                 <FaTrophy className="mr-2 icon-style" />
                 <CardTitle className="card-title">
                   {/* Get highest donation */}$
-                  {this.state.donations.length > 0
+                  {this.state.monetary.length > 0
                     ? Math.max.apply(
                         Math,
-                        this.state.donations.map(function (donation) {
+                        this.state.monetary.map(function (donation) {
                           return donation.DonationAmount;
                         })
                       )
@@ -202,13 +227,13 @@ export default class DonorDashboard extends React.Component {
                 <FaChartLine className="mr-2 icon-style" />
                 <CardTitle className="card-title">
                   ${/* Get average donations if no donation display 0*/}
-                  {this.state.donations.length > 0
+                  {this.state.monetary.length > 0
                     ? (
-                        this.state.donations.reduce(
+                        this.state.monetary.reduce(
                           (total, donation) =>
                             total + Number(donation.DonationAmount),
                           0
-                        ) / this.state.donations.length
+                        ) / this.state.monetary.length
                       ).toFixed(2)
                     : 0}
                 </CardTitle>
@@ -224,86 +249,100 @@ export default class DonorDashboard extends React.Component {
                   # {this.state.donations.length}
                 </CardTitle>
                 <CardSubtitle className="card-subtitle">
-                  Number of Donations Made
+                  Donations Made
                 </CardSubtitle>
               </CardBody>
             </Card>
           </div>
 
-          <div className="row justify-content-center p-3">
-            <div className="col-md-7 mt-4">
-              <Card>
-                <CardBody>
-                  <h3 className="text-start p-5">Donation Analysis</h3>
-                  <DonationBarChart donations={this.state.donations} />
-                </CardBody>
-              </Card>
-            </div>
-
-            <div className="col-md-5 mt-4">
-              <Card className="p-5">
-                <CardBody>
-                  <div className="d-flex justify-content-between mb-5">
-                    <h3>Available Projects</h3>
-                    <a href="/DonorAvailableProjects" className="view-all">
-                      View All
-                    </a>
-                  </div>
-                  {this.state.projects
-                    .slice(Math.max(this.state.projects.length - 4, 0))
-                    .map((project) => (
-                      <div className="d-flex justify-content-between">
-                        <div className="d-flex flex-column">
-                          <h5>{project.ProjectName}</h5>
-                          <p>{project.ProjectDescription}</p>
-                        </div>
-                      </div>
-                    ))}
-                </CardBody>
-              </Card>
-            </div>
+          <div>
+            <Card>
+              <CardBody>
+                <h3 className="text-start">Donation Analysis</h3>
+                <DonationBarChart donations={this.state.monetary} />
+              </CardBody>
+            </Card>
           </div>
 
-          <div className="row justify-content-center">
-            <div className="col-md-12 p-4">
-              <div className="card p-5">
-                <div className="d-flex justify-content-between">
+          <div>
+            <Card>
+              <CardBody>
+                <div className="flex flex-row justify-between pt-5">
+                  <h3>Available Projects</h3>
+                  <a href="/DonorAvailableProjects" className="view-all">
+                    View All
+                  </a>
+                </div>
+                {this.state.projects
+                  .slice(Math.max(this.state.projects.length - 4, 0))
+                  .map((project) => (
+                    <div className="pt-5 pb-5">
+                      <h5>{project.ProjectName}</h5>
+                      <p>{project.ProjectDescription}</p>
+                    </div>
+                  ))}
+              </CardBody>
+            </Card>
+          </div>
+
+          <div>
+            <Card>
+              <CardBody>
+                <div className="flex justify-between">
                   <h3>Donation History</h3>
                   <a href="/DonorHistory" class="view-all">
                     View All
                   </a>
                 </div>
-                <div className="card-body">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Donation Type</th>
-                        <th>Donation Amount</th>
-                        <th>Donation Constraint</th>
-                        <th>Donation Date</th>
-                        <th>Project Id</th>
+
+                <table className="table-responsive ">
+                  <thead>
+                    <tr>
+                      <th>Donation Type</th>
+                      <th>Donation Amount</th>
+                      <th>Donation Constraint</th>
+                      <th>Donation Date</th>
+                      <th>Project Id</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.monetary.map((donation) => (
+                      <tr key={donation.DonationsId}>
+                        <td>{donation.DonationType}</td>
+                        <td>{donation.DonationAmount}</td>
+                        <td>{donation.DonationConstraint}</td>
+                        <td>{donation.DonationDate}</td>
+                        <td>{donation.ProjectId}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.donations.map((donation) => (
-                        <tr key={donation.DonationsId}>
-                          <td>{donation.DonationType}</td>
-                          <td>{donation.DonationAmount}</td>
-                          <td>{donation.DonationConstraint}</td>
-                          <td>
-                            {" "}
-                            {donation.DonationDate
-                              ? donation.DonationDate.substring(0, 10)
-                              : ""}
-                          </td>
-                          <td>{donation.ProjectId}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+                    ))}
+                  </tbody>
+                </table>
+                <table className="table-responsive ">
+                  <thead>
+                    <tr>
+                      <th>Donation Type</th>
+                      <th>Item Name</th>
+                      <th>Item Description</th>
+                      <th>Item Quantity</th>
+                      <th>Donation Date</th>
+                      <th>Project Id</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.item.map((donation) => (
+                      <tr key={donation.DonationsId}>
+                        <td>{donation.DonationType}</td>
+                        <td>{donation.ItemName}</td>
+                        <td>{donation.ItemDescription}</td>
+                        <td>{donation.ItemQuantity}</td>
+                        <td>{donation.DonationDate}</td>
+                        <td>{donation.ProjectId}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </CardBody>
+            </Card>
           </div>
         </div>
       );

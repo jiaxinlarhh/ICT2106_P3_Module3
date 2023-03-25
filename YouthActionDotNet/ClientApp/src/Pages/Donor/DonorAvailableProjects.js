@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Loading } from "../../Components/appCommon";
 import "../../styles/donorDashboard.css";
+import { Card, CardBody, CardTitle, CardSubtitle, Table } from "reactstrap";
 
 function DonorAvailableProjects() {
   const navigate = useNavigate();
@@ -77,50 +78,52 @@ function DonorAvailableProjects() {
           </div>
         </div>
 
-        <div className="row p-3">
-          <div className="col-md-12">
-            <table className="table ">
-              <thead>
-                <tr>
-                  <th>Project Name</th>
-                  <th>Project Description</th>
-                  <th>Project Budget</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {projects.map((project) => (
-                  <tr key={project.ProjectId}>
-                    <td>{project.ProjectName}</td>
-                    <td>{project.ProjectDescription}</td>
-                    <td>$ {project.ProjectBudget}</td>
-
-                    <td>
-                      {project.ProjectStartDate
-                        ? project.ProjectStartDate.substring(0, 10)
-                        : ""}
-                    </td>
-
-                    <td>
-                      {project.ProjectStartDate
-                        ? project.ProjectEndDate.substring(0, 10)
-                        : ""}
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleProjectClick(project.ProjectId)}
-                      >
-                        Donate
-                      </button>
-                    </td>
+        <div>
+          <Card>
+            <CardBody>
+              <table className="table-responsive ">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Project Description</th>
+                    <th>Project Budget</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {projects.map((project) => (
+                    <tr key={project.ProjectId}>
+                      <td>{project.ProjectName}</td>
+                      <td>{project.ProjectDescription}</td>
+                      <td>$ {project.ProjectBudget}</td>
+
+                      <td>
+                        {project.ProjectStartDate
+                          ? project.ProjectStartDate.substring(0, 10)
+                          : ""}
+                      </td>
+
+                      <td>
+                        {project.ProjectStartDate
+                          ? project.ProjectEndDate.substring(0, 10)
+                          : ""}
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleProjectClick(project.ProjectId)}
+                        >
+                          Donate
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardBody>
+          </Card>
         </div>
       </div>
     );

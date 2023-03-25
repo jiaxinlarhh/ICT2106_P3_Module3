@@ -202,15 +202,15 @@ export default class Donations extends React.Component {
       return (
         <>
           <div className="flex justify-end w-300 m-5">
-            <a href="/ItemDonations" class="btn btn-primary">
-              Item Donation
+            <a href="/Donations" class="btn btn-primary">
+              Monetary Donation
             </a>
           </div>
           <DatapageLayout
             settings={this.settings}
-            fieldSettings={this.state.monetarySettings.data.FieldSettings}
-            headers={this.state.monetarySettings.data.ColumnSettings}
-            data={this.state.monetaryContents}
+            fieldSettings={this.state.itemSettings.data.FieldSettings}
+            headers={this.state.itemSettings.data.ColumnSettings}
+            data={this.state.itemContents}
             updateHandle={this.handleUpdate}
             requestRefresh={this.requestRefresh}
             error={this.state.error}
