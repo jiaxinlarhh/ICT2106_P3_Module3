@@ -26,6 +26,7 @@ import DonorAvailableProjects from './Pages/Donor/DonorAvailableProjects';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
+import Report from './Pages/Report/Report';
 import Expense from './Pages/Expense/Expense';
 import Permissions from './Pages/Admin/Permissions';
 
@@ -66,48 +67,36 @@ export default function App() {
   const navigate = useNavigate();
   if (!token) {
     return (
-        <div className="App" style={{maxHeight: height}}>
+      
+      <div className="drawer max-h-screen">
+        <input id="main-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content max-h-screen h-screen flex-col w-full justify-start overflow-x-hidden">
           <LoggedOutNav toggle={drawerToggleClickHandler}></LoggedOutNav>
-          <div className="App-header" style={{maxHeight: height - 56}}>
-            <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction="top">
-              <DrawerSection label={"Modules"}>
+          <Routes>
+            <Route path="/" element={
+              <Login setToken={setToken} setPerms={setPerms}></Login>}></Route>
+            <Route path="/Register" element={<Register />}></Route>
+            <Route path="/volunteer-registration" element={<VolunteerRegistration setToken={setToken} setPerms={setPerms}/>}></Route>
+          </Routes>
+        </div>
+        <div className='drawer-side shadow'>
+            <label htmlFor="main-drawer" className="drawer-overlay">
+            </label>
+            <ul className="menu gap-4 p-4 w-80 bg-base-100 text-base-content">
                 <DrawerItem label="Dashboard" to={"/"} logo={homeImg}></DrawerItem>
                 <DrawerItem label="Volunteer Registration" to={"volunteer-registration"} logo={homeImg}></DrawerItem>
-              </DrawerSection>
-            </SlideDrawer>
-            {backdrop}
-            <Routes>
-              <Route path="/" element={
-                <Login setToken={setToken} setPerms={setPerms}></Login>}></Route>
-              <Route path="/Register" element={<Register />}></Route>
-              <Route path="/volunteer-registration" element={<VolunteerRegistration setToken={setToken} setPerms={setPerms}/>}></Route>
-            </Routes>
-          </div>
+            </ul>
         </div>
+      </div>
     )
   } else {
     const parsedPerms = JSON.parse(perms);
     return (
-        <div className="App" style={{maxHeight: height}}>
-          <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
-          <header className="App-header" style={{maxHeight: height - 56}}>
-            {backdrop}
-            <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction={"top"}>
-              
-              <DrawerSection label={"Modules"}>
-                <DrawerItem label="Home" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                
-                {parsedPerms.map((perm)=>{<DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                const currMod = perm.Module;
-                const toTextUrl = perm.Module.replace(" ", "-");
-                if(perm.Read){
-                  return <DrawerItem label={currMod} to={"/" + toTextUrl} logo={userImg}></DrawerItem>
-                }
-                })}
-                <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
-              </DrawerSection>
-            </SlideDrawer>
+        <div className="drawer drawer-mobile max-h-screen">
+          <input id="main-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content max-h-screen h-screen flex flex-col justify-start overflow-x-hidden">
             
+            <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
             <Routes>
               {token.data.Role == "Admin" &&
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
@@ -162,10 +151,30 @@ export default function App() {
               <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Sample" element={<Sample user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Report" element={<Report user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>
-          </header>
+          </div>
+          <div className='drawer-side shadow'>
+            <label htmlFor="main-drawer" className="drawer-overlay">
+            </label>
+            
+            <ul className="menu p-4 gap-2 w-80 bg-base-100 text-base-content">
+                
+                
+                <DrawerItem label="Home" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                
+                  {parsedPerms.map((perm, index)=>{<DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                  const currMod = perm.Module;
+                  const toTextUrl = perm.Module.replace(" ", "-");
+                  if(perm.Read){
+                    return <DrawerItem key={index} label={currMod} to={"/" + toTextUrl} logo={userImg}></DrawerItem>
+                  }
+                  })}
+                <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
+              </ul>
+          </div>
         </div>
     );
   }

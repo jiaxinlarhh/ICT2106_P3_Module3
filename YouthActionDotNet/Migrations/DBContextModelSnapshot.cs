@@ -138,19 +138,19 @@ namespace YouthActionDotNet.Migrations
                     b.Property<double>("ProjectBudget")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("ProjectCompletionDate")
+                    b.Property<DateTime>("ProjectCompletionDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProjectEndDate")
+                    b.Property<DateTime>("ProjectEndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProjectStartDate")
+                    b.Property<DateTime>("ProjectStartDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectStatus")
@@ -167,6 +167,33 @@ namespace YouthActionDotNet.Migrations
                     b.HasIndex("ServiceCenterId");
 
                     b.ToTable("Project", (string)null);
+                });
+
+            modelBuilder.Entity("YouthActionDotNet.Models.Report", b =>
+                {
+                    b.Property<string>("ReportId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReportDateCreation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReportEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReportName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReportStartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("Report", (string)null);
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
@@ -225,10 +252,10 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("VolunteerWorkId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ShiftEnd")
+                    b.Property<DateTime>("ShiftEnd")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ShiftStart")
+                    b.Property<DateTime>("ShiftStart")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SupervisingEmployee")
@@ -368,6 +395,15 @@ namespace YouthActionDotNet.Migrations
                         .HasForeignKey("ServiceCenterId");
 
                     b.Navigation("ServiceCenter");
+                });
+
+            modelBuilder.Entity("YouthActionDotNet.Models.Report", b =>
+                {
+                    b.HasOne("YouthActionDotNet.Models.File", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId");
+
+                    b.Navigation("File");
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
