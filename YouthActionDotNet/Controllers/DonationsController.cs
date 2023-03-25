@@ -8,12 +8,13 @@ using YouthActionDotNet.Control;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
+using System.Text.Json;
 
 namespace YouthActionDotNet.Controllers{
 
     [Route("api/[controller]")]
     [ApiController]
-    public class DonationsController : ControllerBase, IUserInterfaceCRUD<Donations>
+    public class DonationsController : ControllerBase //, IUserInterfaceCRUD<Donations>
     {
         // Private Instance
         private DonationsControl donationsControl;
@@ -61,17 +62,50 @@ namespace YouthActionDotNet.Controllers{
         }
 
         // Create a new donation
+        // [HttpPost("Create")]
+        // public async Task<ActionResult<string>> Create(Donations template)
+        // {
+        //     var data =  await donationsControl.Create(template);
+
+        //     //pass the data to the view model
+        //     DonationViewModel donationViewModel = new DonationViewModel();
+        //     donationViewModel.JSONObject = data;
+
+        //     //pass the view model to the view
+        //     return donationViewModel.JSONObject;
+        // }
+
+        // Create a new donation
         [HttpPost("Create")]
-        public async Task<ActionResult<string>> Create(Donations template)
+        public async Task<ActionResult<string>> Create(JsonElement donationJson)
         {
-            var data =  await donationsControl.Create(template);
 
-            //pass the data to the view model
-            DonationViewModel donationViewModel = new DonationViewModel();
-            donationViewModel.JSONObject = data;
+            try {
+                var donationType = donationJson.GetProperty("DonationType").GetString();
+                Donations donation;
+                if (donationType == "Monetary") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<MonetaryDonations>(donationJson.GetRawText());
+                }
+                else if (donationType == "Item") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<ItemDonations>(donationJson.GetRawText());
+                }
+                else {
+                    return BadRequest($"Invalid donation type: {donationType}");
+                }
 
-            //pass the view model to the view
-            return donationViewModel.JSONObject;
+                var data =  await donationsControl.Create(donation);
+
+                //pass the data to the view model
+                DonationViewModel donationViewModel = new DonationViewModel();
+                donationViewModel.JSONObject = data;
+
+                //pass the view model to the view
+                return donationViewModel.JSONObject;
+            }
+            catch (Exception ex) {
+                return BadRequest($"Error creating donation: {ex.Message}");
+            }
+
         }
 
         [HttpDelete("{id}")]
@@ -82,16 +116,22 @@ namespace YouthActionDotNet.Controllers{
 
         // Delete a donation based on the donation object
         [HttpDelete("Delete")]
-        public async Task<ActionResult<string>> Delete(Donations template)
+        public async Task<ActionResult<string>> Delete(JsonElement donationJson)
         {
-            var data =  await donationsControl.Delete(template);
+            try {
+                var donationsId = donationJson.GetProperty("DonationsId").GetString();
+                var data =  await donationsControl.Delete(donationsId);
 
-            //pass the data to the view model
-            DonationViewModel donationViewModel = new DonationViewModel();
-            donationViewModel.JSONObject = data;
+                //pass the data to the view model
+                DonationViewModel donationViewModel = new DonationViewModel();
+                donationViewModel.JSONObject = data;
 
-            //pass the view model to the view
-            return donationViewModel.JSONObject;
+                //pass the view model to the view
+                return donationViewModel.JSONObject;
+            }
+            catch (Exception ex) {
+                return BadRequest($"Error creating donation: {ex.Message}");
+            }
         }
 
         // Check if donation exists
@@ -122,28 +162,64 @@ namespace YouthActionDotNet.Controllers{
 
         // Updates a donation with a specific ID in the database
         [HttpPut("{id}")]
-        public async Task<ActionResult<string>> Update(string id, Donations template)
+        public async Task<ActionResult<string>> Update(string id, JsonElement donationJson)
         {
-            var data =  await donationsControl.Update(id,template);
-            //pass the data to the view model
-            DonationViewModel donationViewModel = new DonationViewModel();
-            donationViewModel.JSONObject = data;
+            try {
+                var donationType = donationJson.GetProperty("DonationType").GetString();
+                Donations donation;
+                if (donationType == "Monetary") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<MonetaryDonations>(donationJson.GetRawText());
+                }
+                else if (donationType == "Item") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<ItemDonations>(donationJson.GetRawText());
+                }
+                else {
+                    return BadRequest($"Invalid donation type: {donationType}");
+                }
+
+                var data =  await donationsControl.Update(id, donation);
+                //pass the data to the view model
+                DonationViewModel donationViewModel = new DonationViewModel();
+                donationViewModel.JSONObject = data;
 
             //pass the view model to the view
             return donationViewModel.JSONObject;
+            }
+            catch (Exception ex) {
+                return BadRequest($"Error creating donation: {ex.Message}");
+            }
+            
+
+            
         }
         
         // Updates a donation with a specific ID in the database and fetches all updated records
         [HttpPut("UpdateAndFetch/{id}")]
-        public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Donations template)
+        public async Task<ActionResult<string>> UpdateAndFetchAll(string id, JsonElement donationJson)
         {
-            var data =  await donationsControl.UpdateAndFetchAll(id,template);
-              //pass the data to the view model
-            DonationViewModel donationViewModel = new DonationViewModel();
-            donationViewModel.JSONObject = data;
+            try {
+                var donationType = donationJson.GetProperty("DonationType").GetString();
+                Donations donation;
+                if (donationType == "Monetary") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<MonetaryDonations>(donationJson.GetRawText());
+                }
+                else if (donationType == "Item") {
+                    donation = System.Text.Json.JsonSerializer.Deserialize<ItemDonations>(donationJson.GetRawText());
+                }
+                else {
+                    return BadRequest($"Invalid donation type: {donationType}");
+                }
+                var data =  await donationsControl.UpdateAndFetchAll(id, donation);
+                //pass the data to the view model
+                DonationViewModel donationViewModel = new DonationViewModel();
+                donationViewModel.JSONObject = data;
 
-            //pass the view model to the view
-            return donationViewModel.JSONObject;
+                //pass the view model to the view
+                return donationViewModel.JSONObject;
+            }
+            catch (Exception ex) {
+                return BadRequest($"Error creating donation: {ex.Message}");
+            }
         }
     }
 }

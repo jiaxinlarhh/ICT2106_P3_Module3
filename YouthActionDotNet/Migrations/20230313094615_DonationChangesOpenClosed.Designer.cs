@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouthActionDotNet.Data;
 
@@ -10,9 +11,11 @@ using YouthActionDotNet.Data;
 namespace YouthActionDotNet.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230313094615_DonationChangesOpenClosed")]
+    partial class DonationChangesOpenClosed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -263,8 +266,8 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("ItemName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ItemQuantity")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ItemQuantity")
+                        .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("ItemDonations");
                 });
@@ -273,7 +276,7 @@ namespace YouthActionDotNet.Migrations
                 {
                     b.HasBaseType("YouthActionDotNet.Models.Donations");
 
-                    b.Property<string>("DonationAmount")
+                    b.Property<decimal>("DonationAmount")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DonationConstraint")

@@ -20,7 +20,7 @@ function DonorAvailableProjects() {
         });
         const data = await response.json();
         if (data.success) {
-          console.log(data);
+          console.log("availabel projects", data);
           setProjects(data.data);
           setLoading(false);
         }

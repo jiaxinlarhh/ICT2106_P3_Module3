@@ -7,8 +7,12 @@ class Donate extends React.Component {
   state = {
     id: this.props.params.id,
     loading: true,
-    donationAmount: 0,
+    donationType: "Monetary",
+    donationAmount: 0.0,
     donationConstraint: "",
+    itemName: "",
+    itemDescription: "",
+    itemQuantity: 0,
     project: [],
   };
 
@@ -68,16 +72,34 @@ class Donate extends React.Component {
   handleDonateNow = async (e) => {
     e.preventDefault(); // so that page doesnt refresh on submit
 
-    const toSubmit = {
-      DonationAmount: this.state.donationAmount,
-      DonationConstraint: this.state.donationConstraint,
-      DonationDate: this.getTodaysDate(),
-      DonationType: "online", // hard code its online by default
-      DonorId: this.props.user.data.UserId,
-      ProjectId: this.state.id,
-      //pass a extra field to indicate its a currency type
-      CurrencyType: "JPY",
-    };
+    var toSubmit = {};
+    if (this.state.donationType == "Monetary") {
+      toSubmit = {
+        DonationType: this.state.donationType,
+        DonationDate: this.getTodaysDate(),
+        DonorId: this.props.user.data.UserId,
+        ProjectId: this.state.id,
+        // for Monetary Donations
+        DonationAmount: parseFloat(this.state.donationAmount).toFixed(2),
+        DonationConstraint: this.state.donationConstraint,
+        PaymentMethod: "online", // hard code its online by default
+        //pass a extra field to indicate its a currency type
+        CurrencyType: "JPY",
+      };
+    } else if (this.state.donationType == "Item") {
+      toSubmit = {
+        DonationType: this.state.donationType,
+        DonationDate: this.getTodaysDate(),
+        DonorId: this.props.user.data.UserId,
+        ProjectId: this.state.id,
+        // for Item donation
+        ItemName: this.state.itemName,
+        ItemDescription: this.state.itemDescription,
+        ItemQuantity: this.state.itemQuantity,
+      };
+    }
+
+    console.log("toSubmit", toSubmit);
     // /api/Donations/
     return fetch("/api/Donations/" + "Create", {
       method: "POST",
@@ -93,6 +115,82 @@ class Donate extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  donateMoney = () => {
+    return (
+      <>
+        <div className="form-group row mb-3">
+          <label className="col-sm-3 col-form-label">Donation Amount</label>
+          <div className="col-sm-9">
+            <input
+              type="number"
+              step="0.1"
+              value={this.state.donationAmount}
+              className="form-control"
+              onChange={(e) =>
+                this.setState({ donationAmount: e.target.value })
+              }
+            />
+          </div>
+        </div>
+        <div className="form-group row mb-3">
+          <label className="col-sm-3 col-form-label">Donation Constraint</label>
+          <div className="col-sm-9">
+            <input
+              type="text"
+              value={this.state.donationConstraint}
+              className="form-control"
+              onChange={(e) =>
+                this.setState({ donationConstraint: e.target.value })
+              }
+            />
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  donateItem = () => {
+    return (
+      <>
+        <div className="form-group row mb-3">
+          <label className="col-sm-3 col-form-label">Item Name</label>
+          <div className="col-sm-9">
+            <input
+              type="text"
+              value={this.state.itemName}
+              className="form-control"
+              onChange={(e) => this.setState({ itemName: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="form-group row mb-3">
+          <label className="col-sm-3 col-form-label">Item Description</label>
+          <div className="col-sm-9">
+            <input
+              type="text"
+              value={this.state.itemDescription}
+              className="form-control"
+              onChange={(e) =>
+                this.setState({ itemDescription: e.target.value })
+              }
+            />
+          </div>
+        </div>
+        <div className="form-group row mb-3">
+          <label className="col-sm-3 col-form-label">Item Quantity</label>
+          <div className="col-sm-9">
+            <input
+              type="number"
+              value={this.state.itemQuantity}
+              className="form-control"
+              onChange={(e) => this.setState({ itemQuantity: e.target.value })}
+            />
+          </div>
+        </div>
+      </>
+    );
   };
 
   render() {
@@ -142,6 +240,26 @@ class Donate extends React.Component {
               <form>
                 <div className="form-group row mb-3">
                   <label className="col-sm-3 col-form-label">
+                    Select Donation Type
+                  </label>
+                  <div className="col-sm-9">
+                    {/* <p className="form-control">
+                      {this.state.project.ProjectDescription}
+                    </p> */}
+                    <select
+                      class="form-control"
+                      onChange={(e) => {
+                        this.setState({ donationType: e.target.value });
+                      }}
+                    >
+                      <option>Monetary</option>
+                      <option>Item</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group row mb-3">
+                  <label className="col-sm-3 col-form-label">
                     Selected Project
                   </label>
                   <div className="col-sm-9">
@@ -160,7 +278,14 @@ class Donate extends React.Component {
                     </p>
                   </div>
                 </div>
-                <div className="form-group row mb-3">
+                {(() => {
+                  if (this.state.donationType == "Monetary") {
+                    return this.donateMoney();
+                  } else if (this.state.donationType == "Item") {
+                    return this.donateItem();
+                  }
+                })()}
+                {/* <div className="form-group row mb-3">
                   <label className="col-sm-3 col-form-label">
                     Donation Amount
                   </label>
@@ -189,7 +314,7 @@ class Donate extends React.Component {
                       }
                     />
                   </div>
-                </div>
+                </div> */}
                 <div className="d-flex justify-content-center mt-5">
                   <button
                     className="btn btn-primary"

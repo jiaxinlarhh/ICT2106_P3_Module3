@@ -71,7 +71,19 @@ namespace YouthActionDotNet.Control{
         }
 
         //-------------------------------------------------------------
+        
+        // Currency Converter
+        // public async Task<MonetaryDonations> convertCurrency(Donations template) {
+        //      //CONVERT TO STRING TO DECIMAL
+        //     // var amount = decimal.Parse(template.DonationAmount);
 
+        //     // Convert the donation amount using ICurrency
+        //    var convertedAmount = await _currencyConverter.ConvertCurrency(template.DonationAmount, "USD", "SGD");
+
+        //     // Set the converted amount in the Donations object
+        //     template.DonationAmount = decimal.Parse(convertedAmount);
+        //     return template;
+        // }
 
         // Return all Donations
         public async Task<ActionResult<string>> All()
@@ -83,14 +95,22 @@ namespace YouthActionDotNet.Control{
         // Create a Donations
         public async Task<ActionResult<string>> Create(Donations template)
         {
-            //CONVERT TO STRING TO DECIMAL
-            var amount = decimal.Parse(template.DonationAmount);
+            if (template is MonetaryDonations monetaryTemplate) {
+                // Convert the donation amount using ICurrency
+                // CONVERT TO STRING TO DECIMAL
+                var amount = decimal.Parse(monetaryTemplate.DonationAmount);
+                var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "USD", "SGD");
+                monetaryTemplate.DonationAmount = convertedAmount;
+                template = monetaryTemplate;
+            }
+        //     //CONVERT TO STRING TO DECIMAL
+        //     var amount = decimal.Parse(template.DonationAmount);
 
-            // Convert the donation amount using ICurrency
-           var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "USD", "SGD");
+        //     // Convert the donation amount using ICurrency
+        //    var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "USD", "SGD");
 
-            // Set the converted amount in the Donations object
-            template.DonationAmount = convertedAmount;
+        //     // Set the converted amount in the Donations object
+        //     template.DonationAmount = convertedAmount;
 
             await donationsRepoIn.InsertAsync(template);
             var createdDonations = await donationsRepoOut.GetByIDAsync(template.DonationsId);
@@ -155,12 +175,18 @@ namespace YouthActionDotNet.Control{
             settings.ColumnSettings.Add("DonationType", new ColumnHeader{displayHeader = "Donation Type"});
             settings.ColumnSettings.Add("DonationAmount", new ColumnHeader{displayHeader = "Donation Amount"});
             settings.ColumnSettings.Add("DonationDate", new ColumnHeader{displayHeader = "Donation Date"});
+            settings.ColumnSettings.Add("ItemName", new ColumnHeader{displayHeader = "Item Name"});
+            settings.ColumnSettings.Add("ItemDescription", new ColumnHeader{displayHeader = "Item Description"});
+            settings.ColumnSettings.Add("ItemQuantity", new ColumnHeader{displayHeader = "Item Quantity"});
 
             settings.FieldSettings.Add("DonationsId", new InputType{type = "text", displayLabel= "Donation ID", editable = false, primaryKey = true});
-            settings.FieldSettings.Add("DonationType", new InputType{type = "text", displayLabel= "Donation Type", editable = true, primaryKey = false});
+            settings.FieldSettings.Add("DonationType", new InputType{type = "text", displayLabel= "Donation Type", editable = false, primaryKey = false});
             settings.FieldSettings.Add("DonationAmount", new InputType{type = "number", displayLabel= "Donation Amount", editable = true, primaryKey = false});
             settings.FieldSettings.Add("DonationConstraint", new InputType{type = "text", displayLabel= "Donation Constraint", editable = true, primaryKey = false});
             settings.FieldSettings.Add("DonationDate", new InputType{type = "datetime", displayLabel= "Donation Date", editable = true, primaryKey = false});
+            settings.FieldSettings.Add("ItemName", new InputType{type="text", displayLabel= "Item Name", editable = true, primaryKey = false});
+            settings.FieldSettings.Add("ItemDescription", new InputType{type="text", displayLabel= "Item Description", editable = true, primaryKey = false});
+            settings.FieldSettings.Add("ItemQuantity", new InputType{type="number", displayLabel= "Item Quantity", editable = true, primaryKey = false});
 
             var donors = DonorRepositoryOut.GetAll();
             settings.FieldSettings.Add("DonorId", new DropdownInputType

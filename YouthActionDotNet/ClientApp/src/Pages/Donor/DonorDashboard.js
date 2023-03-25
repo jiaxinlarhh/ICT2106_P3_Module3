@@ -67,7 +67,7 @@ export default class DonorDashboard extends React.Component {
     await this.getDonations()
       .then((response) => {
         if (response.success) {
-          console.log(response);
+          // TODO: check if donationtype is monetary
           this.setState({
             donations: response.data,
             loading: false,

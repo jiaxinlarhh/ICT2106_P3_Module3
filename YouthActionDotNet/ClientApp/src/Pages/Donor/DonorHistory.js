@@ -6,17 +6,42 @@ export default class DonorHistory extends React.Component {
   state = {
     loading: true,
     donations: [],
+    monetary: [],
+    item: [],
   };
 
   componentDidMount = async () => {
     await this.getDonations()
       .then((response) => {
         if (response.success) {
-          console.log(response);
+          var monetaryDonation = [];
+          var itemDonation = [];
+
+          console.log("Donations?: ", this.state.donations);
           this.setState({
             donations: response.data,
             loading: false,
           });
+          // for (val of this.state.donations) {
+          //   console.log(val);
+
+          // }
+
+          response.data.forEach((donation) => {
+            if (donation["DonationType"] === "Monetary") {
+              monetaryDonation.push(donation);
+            } else if (donation["DonationType"] === "Item") {
+              itemDonation.push(donation);
+            }
+          });
+
+          this.setState({
+            monetary: monetaryDonation,
+            item: itemDonation,
+          });
+
+          console.log("Monetary:", this.state.monetary);
+          console.log("Item:", this.state.item);
         }
       })
       .catch((error) => {
@@ -92,11 +117,40 @@ export default class DonorHistory extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.donations.map((donation) => (
+                  {this.state.monetary.map((donation) => (
                     <tr key={donation.DonationsId}>
                       <td>{donation.DonationType}</td>
                       <td>{donation.DonationAmount}</td>
                       <td>{donation.DonationConstraint}</td>
+                      <td>{donation.DonationDate}</td>
+                      <td>{donation.ProjectId}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="row p-3">
+            <div className="col-md-12">
+              <table className="table ">
+                <thead>
+                  <tr>
+                    <th>Donation Type</th>
+                    <th>Item Name</th>
+                    <th>Item Description</th>
+                    <th>Item Quantity</th>
+                    <th>Donation Date</th>
+                    <th>Project Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.item.map((donation) => (
+                    <tr key={donation.DonationsId}>
+                      <td>{donation.DonationType}</td>
+                      <td>{donation.ItemName}</td>
+                      <td>{donation.ItemDescription}</td>
+                      <td>{donation.ItemQuantity}</td>
                       <td>{donation.DonationDate}</td>
                       <td>{donation.ProjectId}</td>
                     </tr>
