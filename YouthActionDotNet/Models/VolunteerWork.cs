@@ -6,15 +6,15 @@ namespace YouthActionDotNet.Models
 {
     public class VolunteerWork
     {
-        VolunteerWork()
+        public VolunteerWork()
         {
             this.VolunteerWorkId = Guid.NewGuid().ToString();
         }
         public string VolunteerWorkId { get; set; }
 
-        public string ShiftStart { get; set; }
+        public DateTime ShiftStart { get; set; }
 
-        public string ShiftEnd { get; set; }
+        public DateTime ShiftEnd { get; set; }
 
         public string SupervisingEmployee { get; set; }
 
