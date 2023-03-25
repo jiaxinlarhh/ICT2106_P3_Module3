@@ -70,6 +70,38 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.project)
             .WithMany()
             .HasForeignKey(e => e.ProjectId);
+        modelBuilder.Entity<MonetaryDonations>()
+            .HasOne(e => e.donor)
+            .WithMany()
+            .HasForeignKey(e => e.DonorId);
+        modelBuilder.Entity<MonetaryDonations>()
+            .HasOne(e => e.project)
+            .WithMany()
+            .HasForeignKey(e => e.ProjectId);
+        modelBuilder.Entity<ItemDonations>()
+            .HasOne(e => e.donor)
+            .WithMany()
+            .HasForeignKey(e => e.DonorId);
+        modelBuilder.Entity<ItemDonations>()
+            .HasOne(e => e.project)
+            .WithMany()
+            .HasForeignKey(e => e.ProjectId);
+        modelBuilder.Entity<MonetaryDonations>()
+            .HasOne(e => e.donor)
+            .WithMany()
+            .HasForeignKey(e => e.DonorId);
+        modelBuilder.Entity<MonetaryDonations>()
+            .HasOne(e => e.project)
+            .WithMany()
+            .HasForeignKey(e => e.ProjectId);
+        modelBuilder.Entity<ItemDonations>()
+            .HasOne(e => e.donor)
+            .WithMany()
+            .HasForeignKey(e => e.DonorId);
+        modelBuilder.Entity<ItemDonations>()
+            .HasOne(e => e.project)
+            .WithMany()
+            .HasForeignKey(e => e.ProjectId);
         modelBuilder.Entity<Report>().ToTable("Report")
             .HasOne(e => e.File)
             .WithMany()
