@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models
 {
-    public class IndividualDonor : Donor
+    public class CorporateDonor : Donor
     {
         // Properties specific to individual donors
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyAddress { get; set; }
     }
 }
