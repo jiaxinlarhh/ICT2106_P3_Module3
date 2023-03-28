@@ -40,7 +40,7 @@ const DonationBarChart = ({ donations }) => {
   function saveChart(){
     const link = document.createElement('a');
     link.download = "DonationsChart.jpeg";
-    link.href = myRef.current.toBase64Image();
+    link.href = myRef.current.toBase64Image('image/jpeg', 1);
     link.click();
   }
 
@@ -68,11 +68,21 @@ const DonationBarChart = ({ donations }) => {
         console.log(myRef.current.toBase64Image());
       },
     },
-  }
+  };
+  const plugin = {
+    beforeDraw: (chartCtx) => {
+      const ctx = chartCtx.canvas.getContext('2d');
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, chartCtx.width, chartCtx.height);
+      ctx.restore();
+    }
+};
 
   return (
     <div className="row">
-      <Bar id = 'save'ref={myRef} data={data} options={options}/>
+      <Bar id = 'save'ref={myRef} data={data} options={options} plugins={[plugin]}/>
       <div className="card w-56 flex flex-col items-stretch basis-1/4 gap-4" style={{ marginTop: '1rem',marginBottom: '1rem' }}>
         <button onClick={saveChart} class="btn btn-primary">
               DOWNLOAD CHART

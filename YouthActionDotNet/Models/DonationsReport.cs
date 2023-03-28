@@ -15,10 +15,6 @@ namespace YouthActionDotNet.Models
 
         public string projectRemainders { get; set; }
 
-        public DateTime monetaryDonateDate { get; set; }
-
-        public DateTime itemDonateDate { get; set; }
-
         public string totalItems { get; set; }
 
         public DateTime generatedDate { get; set; }
@@ -30,8 +26,6 @@ namespace YouthActionDotNet.Models
             this.totalDonations = totalDonations;
             this.projectBudget = projectBudget;
             this.projectRemainders = projectRemainders;
-            this.monetaryDonateDate = monetaryDonateDate;
-            this.itemDonateDate = itemDonateDate;
             this.totalItems = totalItems;
             this.generatedDate = generatedDate;
         }
