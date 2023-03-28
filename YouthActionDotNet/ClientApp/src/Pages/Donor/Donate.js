@@ -120,29 +120,20 @@ class Donate extends React.Component {
   donateMoney = () => {
     return (
       <>
-        <div className="form-group row mb-3">
-          <label className="col-sm-3 col-form-label">Donation Amount</label>
-          <div className="col-sm-9">
+        <div class=" mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold  mb-1 ">
+              Donation Amount
+            </label>
+          </div>
+          <div class="md:w-2/3">
             <input
               type="number"
               step="0.1"
               value={this.state.donationAmount}
-              className="form-control"
+              class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
               onChange={(e) =>
                 this.setState({ donationAmount: e.target.value })
-              }
-            />
-          </div>
-        </div>
-        <div className="form-group row mb-3">
-          <label className="col-sm-3 col-form-label">Donation Constraint</label>
-          <div className="col-sm-9">
-            <input
-              type="text"
-              value={this.state.donationConstraint}
-              className="form-control"
-              onChange={(e) =>
-                this.setState({ donationConstraint: e.target.value })
               }
             />
           </div>
@@ -154,37 +145,51 @@ class Donate extends React.Component {
   donateItem = () => {
     return (
       <>
-        <div className="form-group row mb-3">
-          <label className="col-sm-3 col-form-label">Item Name</label>
-          <div className="col-sm-9">
+        <div class=" mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold  mb-1 ">
+              Item Name
+            </label>
+          </div>
+          <div class="md:w-2/3">
             <input
               type="text"
               value={this.state.itemName}
-              className="form-control"
+              class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
               onChange={(e) => this.setState({ itemName: e.target.value })}
             />
           </div>
         </div>
-        <div className="form-group row mb-3">
-          <label className="col-sm-3 col-form-label">Item Description</label>
-          <div className="col-sm-9">
+
+        <div class=" mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold  mb-1 ">
+              Item Description
+            </label>
+          </div>
+          <div class="md:w-2/3">
             <input
               type="text"
               value={this.state.itemDescription}
-              className="form-control"
+              class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
               onChange={(e) =>
                 this.setState({ itemDescription: e.target.value })
               }
             />
           </div>
         </div>
-        <div className="form-group row mb-3">
-          <label className="col-sm-3 col-form-label">Item Quantity</label>
-          <div className="col-sm-9">
+
+        <div class=" mb-6">
+          <div class="md:w-1/3">
+            <label class="block text-gray-500 font-bold  mb-1 ">
+              Item Quantity
+            </label>
+          </div>
+          <div class="md:w-2/3">
             <input
               type="number"
               value={this.state.itemQuantity}
-              className="form-control"
+              class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
               onChange={(e) => this.setState({ itemQuantity: e.target.value })}
             />
           </div>
@@ -235,97 +240,87 @@ class Donate extends React.Component {
             </div>
           </div>
 
-          <div className="row justify-content-center">
-            <div className="col-md-6 ">
-              <form>
-                <div className="form-group row mb-3">
-                  <label className="col-sm-3 col-form-label">
-                    Select Donation Type
+          <form class="">
+            <div className="flex flex-col justify-center item-center m-5">
+              <div class="mb-6">
+                <div class="md:w-1/3">
+                  <label class="block text-gray-500 font-bold mb-1">
+                    Donation Type
                   </label>
-                  <div className="col-sm-9">
-                    {/* <p className="form-control">
-                      {this.state.project.ProjectDescription}
-                    </p> */}
-                    <select
-                      class="form-control"
-                      onChange={(e) => {
-                        this.setState({ donationType: e.target.value });
-                      }}
-                    >
-                      <option>Monetary</option>
-                      <option>Item</option>
-                    </select>
-                  </div>
                 </div>
+                <div class="md:w-2/3">
+                  <select
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    onChange={(e) => {
+                      this.setState({ donationType: e.target.value });
+                    }}
+                  >
+                    <option>Monetary</option>
+                    <option>Item</option>
+                  </select>
+                </div>
+              </div>
 
-                <div className="form-group row mb-3">
-                  <label className="col-sm-3 col-form-label">
+              <div class=" mb-6">
+                <div class="md:w-1/3">
+                  <label class="block text-gray-500 font-bold  mb-1">
                     Selected Project
                   </label>
-                  <div className="col-sm-9">
-                    <p className="form-control">
-                      {this.state.project.ProjectName}
-                    </p>
+                </div>
+                <div class="md:w-2/3">
+                  <div class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                    {this.state.project.ProjectName}
                   </div>
                 </div>
-                <div className="form-group row mb-3">
-                  <label className="col-sm-3 col-form-label">
+              </div>
+
+              <div class=" mb-6">
+                <div class="md:w-1/3">
+                  <label class="block text-gray-500 font-bold  mb-1 ">
                     Project Description
                   </label>
-                  <div className="col-sm-9">
-                    <p className="form-control">
-                      {this.state.project.ProjectDescription}
-                    </p>
+                </div>
+                <div class="md:w-2/3">
+                  <div class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                    {this.state.project.ProjectDescription}
                   </div>
                 </div>
-                {(() => {
-                  if (this.state.donationType == "Monetary") {
-                    return this.donateMoney();
-                  } else if (this.state.donationType == "Item") {
-                    return this.donateItem();
-                  }
-                })()}
-                {/* <div className="form-group row mb-3">
-                  <label className="col-sm-3 col-form-label">
-                    Donation Amount
+              </div>
+
+              {(() => {
+                if (this.state.donationType == "Monetary") {
+                  return this.donateMoney();
+                } else if (this.state.donationType == "Item") {
+                  return this.donateItem();
+                }
+              })()}
+
+              <div class=" mb-6">
+                <div class="md:w-1/3">
+                  <label class="block text-gray-500 font-bold  mb-1 ">
+                    Project Constraints
                   </label>
-                  <div className="col-sm-9">
-                    <input
-                      type="number"
-                      value={this.state.donationAmount}
-                      className="form-control"
-                      onChange={(e) =>
-                        this.setState({ donationAmount: e.target.value })
-                      }
-                    />
-                  </div>
                 </div>
-                <div className="form-group row mb-3">
-                  <label className="col-sm-3 col-form-label">
-                    Donation Constraint
-                  </label>
-                  <div className="col-sm-9">
-                    <input
-                      type="text"
-                      value={this.state.donationConstraint}
-                      className="form-control"
-                      onChange={(e) =>
-                        this.setState({ donationConstraint: e.target.value })
-                      }
-                    />
-                  </div>
-                </div> */}
-                <div className="d-flex justify-content-center mt-5">
-                  <button
-                    className="btn btn-primary"
-                    onClick={this.handleDonateNow}
-                  >
-                    Donate Now
-                  </button>
+                <div class="md:w-2/3">
+                  <input
+                    type="text"
+                    value={this.state.donationConstraint}
+                    class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    onChange={(e) =>
+                      this.setState({ donationConstraint: e.target.value })
+                    }
+                  />
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
+
+            <button
+              className="btn btn-primary ml-5"
+              onClick={this.handleDonateNow}
+            >
+              Donate Now
+            </button>
+          </form>
         </div>
       );
     }

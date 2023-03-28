@@ -12,7 +12,7 @@ using YouthActionDotNet.Controllers;
 
 namespace YouthActionDotNet.Control
 {
-    public class DonorDashboardControl : IDonation , IProject
+    public class DonorDashboardControl : IDonationDetails , IProject
     {
         private DonationsRepoIn donationsRepoIn;
         private DonationsRepoOut donationsRepoOut;
@@ -29,6 +29,16 @@ namespace YouthActionDotNet.Control
             donationsRepoOut = new DonationsRepoOut(context);
             projectRepositoryOut = new GenericRepositoryOut<Project>(context);
            
+        }
+
+         public async Task<ActionResult<string>> GetDonationByID(string id)
+        {
+            var donations = await donationsRepoOut.GetByIDAsync(id);
+            if (donations == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donations Not Found" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
 
         /** Get all donations by donor id **/
@@ -71,7 +81,7 @@ namespace YouthActionDotNet.Control
             var projects = await projectRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
-    
 
+ 
     }
 }

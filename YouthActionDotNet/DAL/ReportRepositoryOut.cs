@@ -24,6 +24,11 @@ namespace YouthActionDotNet.DAL
         private DbSet<Volunteer> volunteerSet;
 
         private DbSet<VolunteerWork> volunteerWorkSet;
+
+        private DbSet<MonetaryDonations> moneyDonationSet;
+
+        private DbSet<ItemDonations> itemDonationSet;
+        
         public ReportRepositoryOut(DBContext context) :
             base(context)
         {
@@ -34,6 +39,8 @@ namespace YouthActionDotNet.DAL
             this.employeeSet = context.Set<Models.Employee>();
             this.expenseSet = context.Set<Models.Expense>();
             this.projectSet = context.Set<Models.Project>();
+            this.moneyDonationSet = context.Set<Models.MonetaryDonations>();
+            this.itemDonationSet = context.Set<Models.ItemDonations>();
         }
 
         public async Task<IList> getEmployeeExpenseReportData(string  reportStartDate, string reportEndDate, string projectId)
@@ -79,6 +86,28 @@ namespace YouthActionDotNet.DAL
                     projectId = z.volunteerWork.project.ProjectName
                 }).ToListAsync();
             return volunteerWorkArray;
+        }
+        public async Task<IList> getDonationsReportData(string projectId){
+            double sum, noOfItems;
+            
+            sum = moneyDonationSet.Where(y => y.ProjectId == projectId).AsEnumerable().Select(x => Double.Parse(x.DonationAmount)).Sum();
+            Console.WriteLine("sum of donations"+ sum);
+            noOfItems = itemDonationSet.Where(y => y.ProjectId == projectId).AsEnumerable().Select(x => Double.Parse(x.ItemQuantity)).Sum();
+            Console.WriteLine("no of items"+ noOfItems);
+
+            var donationsArray = await projectSet
+            .Where(k => k.ProjectId == projectId)
+            .Select(z => new DonationsReport {
+                projectId = z.ProjectId,
+                projectName = z.ProjectName,
+                totalDonations = sum.ToString(),
+                projectBudget = z.ProjectBudget.ToString(),
+                projectRemainders = (z.ProjectBudget-sum).ToString(),
+                totalItems = noOfItems.ToString(),
+                generatedDate = DateTime.Today
+            })
+            .ToListAsync();
+            return donationsArray;
         }
     }
 }

@@ -1,7 +1,96 @@
-import React from "react";
+import React , { useRef }from "react";
 import { Loading } from "../../Components/appCommon";
 import { DivSpacing } from "../../Components/common";
+import { StdInput } from "../../Components/input"
+import {CSVLink} from "react-csv";
 import DatapageLayout from "../PageLayout";
+import { Bar } from "react-chartjs-2";
+
+const DonationBarChart = ({ donations }) => {
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const myRef = useRef(null)
+  const moneyMonthlyTotals = Array.from({ length: 12 }, () => 0); 
+  const itemMonthlyTotals = Array.from({ length: 12 }, () => 0); 
+
+  donations.forEach((donation) => {
+    const month = new Date(donation.DonationDate).getMonth(); // extract month from donation date
+    if (donation.DonationAmount != null){
+      moneyMonthlyTotals[month] += parseInt(donation.DonationAmount); // add donation amount to corresponding month's total
+    }
+    else{
+      itemMonthlyTotals[month] += parseInt(donation.ItemQuantity);
+    }
+  });
+  console.log(donations)
+
+  function saveChart(){
+    const link = document.createElement('a');
+    link.download = "DonationsChart.jpeg";
+    link.href = myRef.current.toBase64Image('image/jpeg', 1);
+    link.click();
+  }
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "MoneyDonations",
+        data: moneyMonthlyTotals,
+        fill: false,
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
+      },{
+        label: "ItemDonations",
+        data: itemMonthlyTotals,
+        fill: false,
+        backgroundColor: "rgb(99, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
+      }
+    ],
+  };
+  const options = {
+    animation: {
+      onComplete: function () {
+        console.log(myRef.current.toBase64Image());
+      },
+    },
+  };
+  const plugin = {
+    beforeDraw: (chartCtx) => {
+      const ctx = chartCtx.canvas.getContext('2d');
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, chartCtx.width, chartCtx.height);
+      ctx.restore();
+    }
+};
+
+  return (
+    <div className="row">
+      <Bar id = 'save'ref={myRef} data={data} options={options} plugins={[plugin]}/>
+      <div className="card w-56 flex flex-col items-stretch basis-1/4 gap-4" style={{ marginTop: '1rem',marginBottom: '1rem' }}>
+        <button onClick={saveChart} class="btn btn-primary">
+              DOWNLOAD CHART
+          </button>
+      </div>
+    </div>
+  );
+};
 
 export default class Donations extends React.Component {
   state = {
@@ -201,17 +290,12 @@ export default class Donations extends React.Component {
     } else {
       return (
         <>
-          {/* <DatapageLayout
-            settings={this.settings}
-            fieldSettings={this.state.settings.data.FieldSettings}
-            headers={this.state.settings.data.ColumnSettings}
-            data={this.state.content.data}
-            updateHandle={this.handleUpdate}
-            requestRefresh={this.requestRefresh}
-            error={this.state.error}
-            permissions={this.props.permissions}
-            requestError={this.requestError}
-          /> */}
+          <div className="flex justify-end w-300 m-5">
+            <a href="/ItemDonations" class="btn btn-primary">
+              Item Donation
+            </a>
+          </div>
+          <div>
           <DatapageLayout
             settings={this.settings}
             fieldSettings={this.state.monetarySettings.data.FieldSettings}
@@ -223,24 +307,178 @@ export default class Donations extends React.Component {
             permissions={this.props.permissions}
             requestError={this.requestError}
           />
-          <DivSpacing />
-          <DivSpacing />
-          <DivSpacing />
-          <DivSpacing />
-
-          <DatapageLayout
-            settings={this.settings}
-            fieldSettings={this.state.itemSettings.data.FieldSettings}
-            headers={this.state.itemSettings.data.ColumnSettings}
-            data={this.state.itemContents}
-            updateHandle={this.handleUpdate}
-            requestRefresh={this.requestRefresh}
-            error={this.state.error}
-            permissions={this.props.permissions}
-            requestError={this.requestError}
-          />
+          </div>
+          <div>
+          <h3 className="text-start">Donation Analysis</h3>
+          <DonationsReportInput></DonationsReportInput>
+          </div>
         </>
       );
     }
   }
+}
+class DonationsReportInput extends React.Component{
+
+  fields = ["projectId"];
+
+  state={
+      loading:true,
+      donations: [],
+      monetary: [],
+      item: [],
+      dataToFetch: {
+          "projectId": "",
+      },
+  }
+
+  componentDidMount = async () =>{
+      await this.getSettings().then((settings)=>{
+          console.log(settings);
+          this.setState({
+              settings:settings.data,
+          })
+      })
+      this.setState({
+          loading:false,
+      })
+      
+  }
+
+  getSettings = async () =>{
+      return fetch("/api/DonationsReport/Settings", {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      }).then((response)=>{
+          console.log(response)
+          return response.json();
+      })
+  }
+
+  onChange = (field, value) =>{
+      let dataToFetch = this.state.dataToFetch;
+      dataToFetch[field] = value;
+      this.setState({
+          dataToFetch:dataToFetch,
+      })
+
+      this.getReportDetails()
+      .then((response) => {
+        if (response.success) {
+          var monetaryDonation = [];
+          var itemDonation = [];
+
+          console.log("Donations?: ", this.state.donations);
+          this.setState({
+            donations: response.data,
+            loading: false,
+          });
+
+          response.data.forEach((donation) => {
+            // if (donation["DonationType"] === "Monetary") {
+            //   monetaryDonation.push(donation);
+            // } else if (donation["DonationType"] === "Item") {
+            //   itemDonation.push(donation);
+            // }
+            monetaryDonation.push(donation);
+          });
+
+          this.setState({
+            monetary: monetaryDonation,
+            item: itemDonation,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({ error: error.message, loading: false });
+        console.log("Error geting donations")
+      })
+  }
+
+  getReportDetails = async () => {
+    let dataToFetch = this.state.dataToFetch;
+
+    console.log(dataToFetch)
+
+    // Get custom report data
+    const result = await fetch("/api/DonationsReport/DonationsReport",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToFetch),
+    }).then((response)=>{
+        console.log(response)
+        return response.json();
+    })
+
+    var donationsData = this.state.dataToFetch; 
+    
+    this.setState({
+      result:result,
+    })
+
+    // get donations per project
+    if(donationsData.projectId != ""){
+      
+      return fetch("/api/DonationsReport/GetDonationsByProjectId/" + donationsData.projectId, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((response) => {
+        console.log(response)
+        return response.json();
+      });
+    }
+  }
+
+  render = () => {
+    return(
+        this.state.loading? 
+        <Loading></Loading>
+        :
+        <>
+          <div className="card w-56 flex flex-col items-stretch basis-1/4 gap-4">
+          <StdInput
+            field="projectId"
+            fieldLabel="projectId"
+            label="Project Id"
+            type="dropdown"
+            value={this.state.dataToFetch.projectId}
+            options={this.state.settings.FieldSettings.ProjectId.options}
+            allowEmpty={true}
+            onChange={this.onChange}
+            enabled={true} />
+          </div>
+          {this.state.result ?
+            <>
+              <DonationBarChart donations={this.state.monetary} />
+              <div className="card w-56 flex flex-col items-stretch basis-1/4 gap-4">
+                <DonationsReport data={this.state.result.data} reportData={this.state.dataToFetch} FieldSettings={this.state.settings.FieldSettings}></DonationsReport>
+              </div>
+            </>
+            : null}
+        </>
+    )
+  }
+}
+const DonationsReport = (props) => {
+    
+  const {data, reportData,FieldSettings} = props;
+
+  const projectName = FieldSettings.ProjectId.options.find((option)=>option.value == reportData.projectId)?.label;
+
+  let transformedData = []
+
+  data.forEach((item)=>{
+      let transformedItem = {...item}
+      transformedData.push(transformedItem);
+  })
+
+  return (
+      <CSVLink className={"btn btn-primary"} data={transformedData} filename={"DonationsReport_"+projectName}>DOWNLOAD REPORT</CSVLink>
+  
+  )
 }

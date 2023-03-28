@@ -12,7 +12,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control{
 
-    public class DonationsControl: IUserInterfaceCRUD<Donations> , IDonation
+    public class DonationsControl: IUserInterfaceCRUD<Donations> , IDonationDetails
     {
         // Initialize the Generic Repositories
         private DonorRepoOut DonorRepositoryOut;
@@ -42,6 +42,20 @@ namespace YouthActionDotNet.Control{
         // -------For Interface IDonation----------------
 
         // Return all Donations by Donor ID
+
+         public async Task<ActionResult<string>> GetDonationByID(string id){
+
+            var donations = donationsRepoOut.GetByIDAsync(id);
+              if (donations == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Donations Not Found" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
+
+          
+
+
+         }
         public async Task<ActionResult<string>> GetByDonorId(string id){
             var donations = await donationsRepoOut.GetByDonorId(id);
             if (donations == null)
@@ -70,6 +84,9 @@ namespace YouthActionDotNet.Control{
             }
             return JsonConvert.SerializeObject(new { success = true, data = donations, message = "Donations Successfully Retrieved" });
         }
+
+
+
         public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<Donations>, IOrderedQueryable<Donations>> orderBy, int page, int pageSize)
         {
             var projects = await donationsRepoOut.GetAllInPagesAsync(
@@ -111,9 +128,10 @@ namespace YouthActionDotNet.Control{
                 // Convert the donation amount using ICurrency
                 // CONVERT TO STRING TO DECIMAL
                 var amount = decimal.Parse(monetaryTemplate.DonationAmount);
-                var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "USD", "SGD");
+                var convertedAmount = await _currencyConverter.ConvertCurrency(amount, "SGD", "SGD");
                 monetaryTemplate.DonationAmount = convertedAmount;
                 template = monetaryTemplate;
+                
             }
         //     //CONVERT TO STRING TO DECIMAL
         //     var amount = decimal.Parse(template.DonationAmount);
