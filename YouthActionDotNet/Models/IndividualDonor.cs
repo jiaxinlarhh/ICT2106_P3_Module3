@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models
 {
-    public class individualDonor : Donor
+    public class IndividualDonor : Donor
     {
         // Properties specific to corporate donors
        
