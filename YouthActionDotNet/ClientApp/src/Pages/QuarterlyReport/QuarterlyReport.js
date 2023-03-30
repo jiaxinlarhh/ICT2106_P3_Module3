@@ -155,7 +155,7 @@ export default class QuarterlyReport extends React.Component {
   };
 
   settings = {
-    title: "Quarterly Report",
+    title: "Request",
     primaryColor: "#a6192e",
     accentColor: "#94795d",
     textColor: "#ffffff",
@@ -276,8 +276,9 @@ export default class QuarterlyReport extends React.Component {
             <Heading
               as="h3"
               size="lg"
-              style={{ marginTop: "0px", marginBottom: "40px" }}
+              style={{ marginTop: "10px", marginBottom: "40px" }}
             >
+              Quarterly Report
             </Heading>
             Service Center
             <br />
@@ -294,10 +295,10 @@ export default class QuarterlyReport extends React.Component {
             </Select>
             <br />
             <br />
-            Quarter
+            Quater
             <br />
             <br />
-            <Select placeholder="- Select a Quarter -" size="sm">
+            <Select placeholder="- Select a Quater -" size="sm">
               <option value="Q1">Q1</option>
               <option value="Q2">Q2</option>
               <option value="Q3">Q3</option>

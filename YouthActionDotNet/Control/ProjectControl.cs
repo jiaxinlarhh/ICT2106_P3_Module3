@@ -136,12 +136,12 @@ namespace YouthActionDotNet.Control
 
             settings.ColumnSettings.Add("ProjectId", new ColumnHeader { displayHeader = "Project Id" });
             settings.ColumnSettings.Add("ProjectName", new ColumnHeader { displayHeader = "Project Name" });
-            settings.ColumnSettings.Add("ProjectDescription", new ColumnHeader { displayHeader = "Project Description" });
-            settings.ColumnSettings.Add("ProjectStartDate", new ColumnHeader { displayHeader = "Project Start Date" });
-            settings.ColumnSettings.Add("ProjectEndDate", new ColumnHeader { displayHeader = "Project End Date" });
-            settings.ColumnSettings.Add("ProjectCompletionDate", new ColumnHeader { displayHeader = "Project Completion Date" });
-            settings.ColumnSettings.Add("ProjectStatus", new ColumnHeader { displayHeader = "Project Status" });
-            settings.ColumnSettings.Add("ProjectBudget", new ColumnHeader { displayHeader = "Project Budget" });
+            settings.ColumnSettings.Add("ProjectDescription", new ColumnHeader { displayHeader = "Description" });
+            settings.ColumnSettings.Add("ProjectStartDate", new ColumnHeader { displayHeader = "Start Date" });
+            settings.ColumnSettings.Add("ProjectEndDate", new ColumnHeader { displayHeader = "End Date" });
+            settings.ColumnSettings.Add("ProjectCompletionDate", new ColumnHeader { displayHeader = "Completion Date" });
+            settings.ColumnSettings.Add("ProjectStatus", new ColumnHeader { displayHeader = "Status" });
+            settings.ColumnSettings.Add("ProjectBudget", new ColumnHeader { displayHeader = "Budget" });
             settings.ColumnSettings.Add("ServiceCenterId", new ColumnHeader { displayHeader = "Service Center Id" });
 
             settings.FieldSettings.Add("ProjectId", new InputType { type = "text", displayLabel = "Project Id", editable = false, primaryKey = true });

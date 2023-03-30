@@ -9,7 +9,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL
 {
-    public class GenericRepositoryOut<TEntity> where TEntity: class {
+    public class GenericRepositoryOut<TEntity> : IServiceCentreRepoOut<TEntity> where TEntity: class {
         internal DbSet<TEntity> dbSet;
         internal DbContext context;
 

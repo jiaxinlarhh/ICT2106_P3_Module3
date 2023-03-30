@@ -127,7 +127,8 @@ namespace YouthActionDotNet.Control
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });
             settings.ColumnSettings.Add("Role", new ColumnHeader { displayHeader = "Role" });
-            
+
+            settings.FieldSettings.Add("ServiceCenterName", new InputType { type = "text", displayLabel = "Service Centre Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("EmployeeNationalId", new InputType { type = "text", displayLabel = "National Id", editable = true, primaryKey = false, toolTip = "E.g. AB123456C" });
             settings.FieldSettings.Add("BankName", new InputType { type = "text", displayLabel = "Bank Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("BankAccountNumber", new InputType { type = "text", displayLabel = "Bank Account Number", editable = true, primaryKey = false });
@@ -140,6 +141,7 @@ namespace YouthActionDotNet.Control
                 new DropdownOption { value = "Intern", label = "Intern" },
                 new DropdownOption { value = "Temp", label = "Temp" },
             } });
+
             var employeeRoles = PermissionsRepositoryOut.GetEmployeeRoles();
             settings.FieldSettings.Add("EmployeeRole", 
             new DropdownInputType { 

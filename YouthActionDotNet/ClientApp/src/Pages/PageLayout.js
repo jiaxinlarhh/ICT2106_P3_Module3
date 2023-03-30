@@ -52,6 +52,7 @@ export default class DatapageLayout extends React.Component {
         for (let i = 1; i <= Math.ceil(this.state.data.length / this.state.itemsPerPage); i++) {
             pageNumbers.push(i);
         }
+        const button = this.props.button;
         let extraComponents = [];
         this.props.extraComponents?.length > 0 && 
 
@@ -259,10 +260,10 @@ export default class DatapageLayout extends React.Component {
                                 handleClose={this.handleClose} 
                                 hasFields={this.props.hasFields}
                                 popUpContent={this.state.popUpContent}
-                                perms={this.state.perms}>
+                                    perms={this.state.perms}>
                                     {this.props.children? 
                                     this.props.children[index + ((this.state.currentPage - 1) * this.state.itemsPerPage)]: 
-                                    ""}
+                                        ""}
                                 </ExpandableRow>
                             })}
                         </ListTable>
