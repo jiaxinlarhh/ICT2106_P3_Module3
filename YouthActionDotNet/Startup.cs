@@ -11,8 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.DAL;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
-using System.Collections.Generic;
-using YouthActionDotNet.Control;
 
 namespace YouthActionDotNet
 {
@@ -57,15 +55,6 @@ namespace YouthActionDotNet
             {
                 configuration.RootPath = "ClientApp/build";
             });
-
-            services.AddSignalR();
-
-            services.AddSingleton<UserCountNotifier>();
-            services.AddSingleton<INotificationListener, NotificationObserver>(); // Replace with your implementation
-
-            // Register a collection of INotificationListener
-            services.AddSingleton<IEnumerable<INotificationListener>>(sp => sp.GetServices<INotificationListener>());
-            services.AddSingleton<IUserRequest, UserGeneric>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,7 +90,6 @@ namespace YouthActionDotNet
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<UserGenericCountHub>("/userGenericCountHub");
             });
 
             app.UseSpa(spa =>

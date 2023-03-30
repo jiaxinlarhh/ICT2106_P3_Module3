@@ -1,17 +1,14 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models
 {
-    public class ServiceCenter 
+    public class ServiceCenter
     {
-
         public ServiceCenter()
         {
             this.ServiceCenterId = Guid.NewGuid().ToString();
         }
-
         public string ServiceCenterId { get; set; }
         public string ServiceCenterName { get; set; }
         public string ServiceCenterAddress { get; set; }
@@ -19,6 +16,5 @@ namespace YouthActionDotNet.Models
 
         [JsonIgnore]
         public virtual Employee RegionalDirector { get; set; }
-
     }
 }

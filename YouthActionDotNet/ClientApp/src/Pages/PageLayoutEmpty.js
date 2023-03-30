@@ -168,6 +168,9 @@ export default class DatapageLayoutEmpty extends React.Component {
 
     render() {
         return (
+
+            
+
             this.state.perms?.Read ? 
             <div className="d-flex flex-column container-fluid listPageContainer h-100">
                 {this.props.error !== "" && 

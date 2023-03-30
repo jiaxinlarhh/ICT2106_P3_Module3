@@ -169,6 +169,36 @@ namespace YouthActionDotNet.Migrations
                     b.ToTable("Project", (string)null);
                 });
 
+            modelBuilder.Entity("YouthActionDotNet.Models.Request", b =>
+                {
+                    b.Property<string>("RequestId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RRF_DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RRF_reason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RRF_requestedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RRF_resourceType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RRF_status")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RequestId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Request", (string)null);
+                });
+
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
                 {
                     b.Property<string>("ServiceCenterId")
@@ -289,11 +319,6 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("PAYE")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ServiceCenterName")
-                        .HasColumnType("TEXT");
-
-                    b.HasIndex("ServiceCenterName");
-
                     b.ToTable("Employee", (string)null);
                 });
 
@@ -375,6 +400,15 @@ namespace YouthActionDotNet.Migrations
                     b.Navigation("ServiceCenter");
                 });
 
+            modelBuilder.Entity("YouthActionDotNet.Models.Request", b =>
+                {
+                    b.HasOne("YouthActionDotNet.Models.Project", "project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
+                    b.Navigation("project");
+                });
+
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
                 {
                     b.HasOne("YouthActionDotNet.Models.Employee", "RegionalDirector")
@@ -418,17 +452,11 @@ namespace YouthActionDotNet.Migrations
 
             modelBuilder.Entity("YouthActionDotNet.Models.Employee", b =>
                 {
-                    b.HasOne("YouthActionDotNet.Models.ServiceCenter", "ServiceCenter")
-                        .WithMany()
-                        .HasForeignKey("ServiceCenterName");
-
                     b.HasOne("YouthActionDotNet.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ServiceCenter");
 
                     b.Navigation("User");
                 });

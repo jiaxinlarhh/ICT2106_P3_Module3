@@ -159,7 +159,7 @@ export default class Request extends React.Component {
         ProjectName: "Lion City Leap",
         ResourceType: "Time",
         DateTime: "13/03/2023 08:45:23",
-        SubmittedBy: "Guan Lin",
+        SubmittedBy: "testEmployee",
         Status: "Pending",
         TimeAmount: "3 More Days",
         SpaceAmount: "Enter an Amount",
@@ -174,7 +174,7 @@ export default class Request extends React.Component {
         ProjectName: "Garden State Growth",
         ResourceType: "Space",
         DateTime: "14/03/2023 08:45:23",
-        SubmittedBy: "Yi Kiat",
+        SubmittedBy: "testEmployee",
         Status: "Pending",
         TimeAmount: "Enter an Amount",
         SpaceAmount: "Need 2 more Room",
@@ -189,7 +189,7 @@ export default class Request extends React.Component {
         ProjectName: "Marina Milestone",
         ResourceType: "Donor",
         DateTime: "15/03/2023 08:45:23",
-        SubmittedBy: "Jia Xin",
+        SubmittedBy: "testEmployee",
         Status: "Pending",
         TimeAmount: "Enter an Amount",
         SpaceAmount: "Enter an Amount",
@@ -204,7 +204,7 @@ export default class Request extends React.Component {
         ProjectName: "Island Innovation",
         ResourceType: "Money",
         DateTime: "16/03/2023 08:45:23",
-        SubmittedBy: "Ai Xin",
+        SubmittedBy: "testEmployee",
         Status: "Read",
         TimeAmount: "Enter an Amount",
         SpaceAmount: "Enter an Amount",
@@ -219,7 +219,7 @@ export default class Request extends React.Component {
         ProjectName: "Merlion Momentum",
         ResourceType: "Volunteer",
         DateTime: "17/03/2023 08:45:23",
-        SubmittedBy: "Jing Yi",
+        SubmittedBy: "testEmployee",
         Status: "Read",
         TimeAmount: "Enter an Amount",
         SpaceAmount: "Enter an Amount",
@@ -347,7 +347,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -468,7 +468,7 @@ export default class Request extends React.Component {
                           <Box>Lion City Leap</Box>
                           <Box>Time</Box>
                           <Box>13/03/2023 08:45:23</Box>
-                          <Box>Guan Lin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -590,7 +590,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -711,7 +711,7 @@ export default class Request extends React.Component {
                           <Box>Garden State Growth</Box>
                           <Box>Space</Box>
                           <Box>14/03/2023 08:45:23</Box>
-                          <Box>Yi Kiat</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -833,7 +833,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -954,7 +954,7 @@ export default class Request extends React.Component {
                           <Box>Island Innovation</Box>
                           <Box>Money</Box>
                           <Box>16/03/2023 08:45:23</Box>
-                          <Box>Ai Xin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Read</Box>
                         </SimpleGrid>
                       </Box>
@@ -1076,7 +1076,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -1197,7 +1197,7 @@ export default class Request extends React.Component {
                           <Box>Marina Milestone</Box>
                           <Box>Donor</Box>
                           <Box>15/03/2023 08:45:23</Box>
-                          <Box>Jia Xin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -1319,7 +1319,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -1440,7 +1440,7 @@ export default class Request extends React.Component {
                           <Box>Merlion Momentum</Box>
                           <Box>Volunteer</Box>
                           <Box>17/03/2023 08:45:23</Box>
-                          <Box>Jing Yi</Box>
+                          <Box>testEmployee</Box>
                           <Box>Read</Box>
                         </SimpleGrid>
                       </Box>
@@ -1563,7 +1563,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -1683,7 +1683,7 @@ export default class Request extends React.Component {
                           <Box>Lion City Leap</Box>
                           <Box>Time</Box>
                           <Box>13/03/2023 08:45:23</Box>
-                          <Box>Guan Lin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -1817,7 +1817,7 @@ export default class Request extends React.Component {
                           <Box>Garden State Growth</Box>
                           <Box>Space</Box>
                           <Box>14/03/2023 08:45:23</Box>
-                          <Box>Yi Kiat</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -1951,7 +1951,7 @@ export default class Request extends React.Component {
                           <Box>Marina Milestone</Box>
                           <Box>Donor</Box>
                           <Box>15/03/2023 08:45:23</Box>
-                          <Box>Jia Xin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Pending</Box>
                         </SimpleGrid>
                       </Box>
@@ -2075,7 +2075,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -2195,7 +2195,7 @@ export default class Request extends React.Component {
                           <Box>Island Innovation</Box>
                           <Box>Money</Box>
                           <Box>16/03/2023 08:45:23</Box>
-                          <Box>Ai Xin</Box>
+                          <Box>testEmployee</Box>
                           <Box>Read</Box>
                         </SimpleGrid>
                       </Box>
@@ -2329,7 +2329,7 @@ export default class Request extends React.Component {
                           <Box>Merlion Momentum</Box>
                           <Box>Volunteer</Box>
                           <Box>17/03/2023 08:45:23</Box>
-                          <Box>Jing Yi</Box>
+                          <Box>testEmployee</Box>
                           <Box>Read</Box>
                         </SimpleGrid>
                       </Box>
@@ -2445,7 +2445,7 @@ export default class Request extends React.Component {
           <>
 
             <Heading as="h3" size="lg" style={{ marginBottom: "20px" }}>
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -2576,7 +2576,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              View All Request Form
+              Filter Option: 
               <DrawerExample
                 style={{ position: "absolute", right: 0 }}
                 selectedOption1={this.state.selectedOption1}
@@ -2678,7 +2678,7 @@ export default class Request extends React.Component {
   };
 
   settings = {
-    title: "Request",
+    title: "View All Request Form",
     primaryColor: "#a6192e",
     accentColor: "#94795d",
     textColor: "#ffffff",

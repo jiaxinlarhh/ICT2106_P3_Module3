@@ -206,7 +206,8 @@ export default class Volunteer extends React.Component {
                                 }}>Revoke</StdButton>
                             </div>
                         )
-                    }else if(item.ApprovalStatus === "Pending"){
+                    }
+                    else if(item.ApprovalStatus === "Pending"){
                         
                         
                         return (
@@ -216,7 +217,8 @@ export default class Volunteer extends React.Component {
                                 }}>Approve</StdButton>
                             </div>
                         )
-                    }else{
+                    }
+                    else{
                         return null;
                     }
                 })}

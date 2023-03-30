@@ -26,7 +26,7 @@ export default class Request extends React.Component {
   };
 
   settings = {
-    title: "Request",
+    title: "Request Form",
     primaryColor: "#a6192e",
     accentColor: "#94795d",
     textColor: "#ffffff",
@@ -198,7 +198,7 @@ export default class Request extends React.Component {
               size="lg"
               style={{ marginTop: "10px", marginBottom: "20px" }}
             >
-              Request Form
+              
             </Heading>
 
             <SimpleGrid columns={2} spacing={20}>

@@ -70,6 +70,13 @@
     "Delete": true
   },
   {
+    "Module": "Feedback",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
     "Module": "Sample",
     "Create": true,
     "Read": true,
@@ -77,14 +84,56 @@
     "Delete": true
   },
   {
-    "Module": "DonorAvailableProjects",
+    "Module": "View Request",
     "Create": true,
     "Read": true,
     "Update": true,
     "Delete": true
   },
   {
-    "Module": "DonorHistory",
+    "Module": "Request",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "View Performance Evaluation",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "Quarterly Report",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "Performance Evaluation",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "Request Form",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "View All Request Form",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
+  },
+  {
+    "Module": "Performance Evaluation Form",
     "Create": true,
     "Read": true,
     "Update": true,

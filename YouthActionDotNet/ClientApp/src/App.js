@@ -23,15 +23,11 @@ import DonorDashboard from './Pages/Donor/DonorDashboard';
 import Donate from './Pages/Donor/Donate';
 import DonorHistory from './Pages/Donor/DonorHistory';
 import DonorAvailableProjects from './Pages/Donor/DonorAvailableProjects';
-import ServiceCenters from './Pages/ServiceCenter/ServiceCenters';
+import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
 import Expense from './Pages/Expense/Expense';
-import Permissions from './Pages/Admin/Permissions';
-import UserGeneric from './Pages/ServiceCenter/Users/UserGeneric'
 
-import Home  from "./Pages/Home"
-import VolunteerHome from "./Pages/Volunteer/volunteerHome"
 
 import Request from './Pages/Request/Request';
 import ViewRequest from './Pages/Request/ViewRequest';
@@ -39,8 +35,13 @@ import ViewFeedback from './Pages/PerformanceEvaluation/ViewPerformanceEvaluatio
 import QuarterlyReport from './Pages/QuarterlyReport/QuarterlyReport';
 import Feedback from './Pages/PerformanceEvaluation/PerformanceEvaluation';
 
+
+import Permissions from './Pages/Admin/Permissions';
+
+import Home  from "./Pages/Home"
+import VolunteerHome from "./Pages/Volunteer/volunteerHome"
+
 import Sample from './Pages/Sample';
-import { ChakraProvider } from '@chakra-ui/react'
 
 
 /* function getToken() {  
@@ -73,8 +74,7 @@ export default function App() {
 
   const navigate = useNavigate();
   if (!token) {
-      return (
-        <ChakraProvider>
+    return (
         <div className="App" style={{maxHeight: height}}>
           <LoggedOutNav toggle={drawerToggleClickHandler}></LoggedOutNav>
           <div className="App-header" style={{maxHeight: height - 56}}>
@@ -92,13 +92,11 @@ export default function App() {
               <Route path="/volunteer-registration" element={<VolunteerRegistration setToken={setToken} setPerms={setPerms}/>}></Route>
             </Routes>
           </div>
-              </div>
-          </ChakraProvider>
+        </div>
     )
   } else {
     const parsedPerms = JSON.parse(perms);
-      return (
-          <ChakraProvider>
+    return (
         <div className="App" style={{maxHeight: height}}>
           <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
           <header className="App-header" style={{maxHeight: height - 56}}>
@@ -106,15 +104,17 @@ export default function App() {
             <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction={"top"}>
               
               <DrawerSection label={"Modules"}>
-                <DrawerItem label="Home" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Service Center" to={"/Service-Center"} logo={userImg}></DrawerItem>
-                <DrawerItem label="Projects" to={"/Project"} logo={userImg}></DrawerItem>
-                <DrawerItem label="Users" to={"/UserGeneric"} logo={userImg}></DrawerItem>
-                <DrawerItem label="Request" to={"/Request"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="ViewRequest" to={"/ViewRequest"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Feedback" to={"/Feedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="ViewFeedback" to={"/ViewFeedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="QuarterlyReport" to={"/QuarterlyReport"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Users" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                
+                
+
+                <DrawerItem label="Request" to={"/Request"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="ViewRequest" to={"/ViewRequest"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="PerformanceEvaluation" to={"/Feedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="ViewPerformanceEvaluation" to={"/ViewFeedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="QuarterlyReport" to={"/QuarterlyReport"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+
+
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
@@ -124,8 +124,7 @@ export default function App() {
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
               }
               {token.data.Role == "Donor" &&
-                <Route path="/" element={<DonorDashboard user={token} permissions = {parsedPerms}/>}/>
-             
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
               }
               {token.data.Role == "Volunteer" &&
                 <Route path="/" element={<VolunteerHome user={token} permissions = {parsedPerms}/>}/>
@@ -158,33 +157,31 @@ export default function App() {
               ""
               }
               <Route path="/Users" element={<Users user={token} permissions = {parsedPerms}/>}/>  
-                <Route path="/Employees" element={<Employees user={token} permissions={parsedPerms} />} />
+              <Route path="/Employees" element={<Employees user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Volunteers" element={<Volunteer user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/volunteer-Registration" element={<VolunteerRegistration user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Donors" element={<Donors user={token} permissions = {parsedPerms}></Donors>}/>
-                          <Route path="/Service-Center" element={<ServiceCenters user={token} permissions={parsedPerms} />} />
-                          <Route path="/UserGeneric" element={<UserGeneric user={token} permissions={parsedPerms} />} />
-                <Route path="/Project" element={<Project user={token} permissions={parsedPerms} />} />
-                <Route path="/volunteer-Registration" element={<VolunteerRegistration user={token} permissions={parsedPerms} />} />
-                <Route path="/Donations" element={<Donations user={token} permissions={parsedPerms}></Donations>} />
-                <Route path="/DonorDashboard" element={<DonorDashboard user={token} permissions={parsedPerms}></DonorDashboard>} />
-                <Route path="/DonorHistory" element={<DonorHistory user={token} permissions={parsedPerms}></DonorHistory>} />
-                <Route path="/DonorAvailableProjects" element={<DonorAvailableProjects user={token} permissions={parsedPerms}></DonorAvailableProjects>} />
-                <Route path="/Donate" element={<Donate user={token} permissions={parsedPerms}></Donate>} />
-                <Route path="/Volunteer-Work" element={<VolunteerWork user={token} permissions={parsedPerms} />} />
-                <Route path="/Expenses" element={<Expense user={token} permissions={parsedPerms} />} />
-                <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
-                <Route path="/Sample" element={<Sample user={token} permissions={parsedPerms} />} />
-                <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>} />
-                <Route path="/Request" element={<Request user={token} permissions={JSON.parse(perms)} />} />
-                <Route path="/ViewRequest" element={<ViewRequest user={token} permissions={JSON.parse(perms)} />} />
-                <Route path="/QuarterlyReport" element={<QuarterlyReport user={token} permissions={JSON.parse(perms)} />} />
-                <Route path="/ViewFeedback" element={<ViewFeedback user={token} permissions={JSON.parse(perms)} />} />
-                <Route path="/Feedback" element={<Feedback user={token} permissions={JSON.parse(perms)} />} />
+              <Route path="/Donations" element={<Donations user={token} permissions = {parsedPerms}></Donations>}/>
+              <Route path="/Volunteer-Work" element={<VolunteerWork user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Service-Center" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Project" element={<Project user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
+              
+
+              <Route path="/Request" element={<Request user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/ViewRequest" element={<ViewRequest user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/QuarterlyReport" element={<QuarterlyReport user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/ViewFeedback" element={<ViewFeedback user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Feedback" element={<Feedback user={token} permissions = {JSON.parse(perms)}/>}/>
+              
+
+              <Route path="/Sample" element={<Sample user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>
           </header>
-              </div>
-          </ChakraProvider>
+        </div>
     );
   }
 }
