@@ -114,7 +114,6 @@ export default function App() {
                 <DrawerItem label="ViewRequest" to={"/ViewRequest"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="PerformanceEvaluation" to={"/Feedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="ViewPerformanceEvaluation" to={"/ViewFeedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Permissions" to={"/Permissions"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
