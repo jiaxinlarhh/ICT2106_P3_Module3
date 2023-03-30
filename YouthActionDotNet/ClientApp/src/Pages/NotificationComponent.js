@@ -381,15 +381,15 @@ const MyComponent = () => {
         right: "23em",
       }}
     >
-      <button onClick={() => displayAll()}>
+      <button onClick={() => displayAll()} >
         <MdNotificationsNone
           style={{
             width: "1.7em",
-            height: "2em",
+            height: "3em",
             color: "grey",
             position: "fixed",
             zIndex: "100",
-            right: "20em",
+            right: "23em",
             top: "1.2em",
           }}
         />
@@ -400,8 +400,8 @@ const MyComponent = () => {
             color: "black",
             position: "fixed",
             zIndex: "100",
-            right: "20em",
-            top: "1.2em",
+            right: "21.9em",
+            top: "1.6em",
           }}
         >
           {/* {counter} */}
@@ -420,25 +420,7 @@ const MyComponent = () => {
       </button> */}
 
       {/* This Unordered list is for debugging hehehe */}
-      <ul style={{ width: "100vw", color: "transparent" }}>
-        {notifications.map(
-          (notification) => (
-            countItemsinList(),
-            (
-              <li key={notification.id}>
-                <span
-                  style={{
-                    fontWeight:
-                      notification.status === "read" ? "normal" : "bold",
-                  }}
-                >
-                  {/* {notification.message} {" -> status ->"} {notification.status} */}
-                </span>
-              </li>
-            )
-          )
-        )}
-      </ul>
+      
     </div>
   );
 };
