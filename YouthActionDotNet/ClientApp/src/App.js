@@ -112,9 +112,8 @@ export default function App() {
                 <DrawerItem label="Users" to={"/UserGeneric"} logo={userImg}></DrawerItem>
                 <DrawerItem label="Request" to={"/Request"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="ViewRequest" to={"/ViewRequest"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Feedback" to={"/Feedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="ViewFeedback" to={"/ViewFeedback"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="QuarterlyReport" to={"/QuarterlyReport"} logo={userImg} currentActive={active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="PerformanceEvaluation" to={"/Feedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="ViewPerformanceEvaluation" to={"/ViewFeedback"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
