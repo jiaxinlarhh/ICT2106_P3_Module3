@@ -1,8 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { Loading } from "../../Components/appCommon";
+import DatapageLayout from "../PageLayout";
 import "../../styles/donorDashboard.css";
-import { Card, CardBody, CardTitle, CardSubtitle, Table } from "reactstrap";
+import { Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 import {
   FaMoneyBillWave,
   FaTrophy,
@@ -11,136 +11,137 @@ import {
 } from "react-icons/fa";
 
 import Chart from "chart.js/auto";
-import { Bar, Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
-const DonationBarChart = ({ donations }) => {
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const monthlyTotals = Array.from({ length: 12 }, () => 0); // initialize array with 12 zeros
-
-  donations.forEach((donation) => {
-    const month = new Date(donation.DonationDate).getMonth(); // extract month from donation date
-    monthlyTotals[month] += parseInt(donation.DonationAmount); // add donation amount to corresponding month's total
-  });
-
+const TestBarChart = () => {
+  const labels = ["January", "February", "March", "April", "May", "June"];
   const data = {
     labels: labels,
     datasets: [
       {
-        label: "Donations",
-        data: monthlyTotals,
-        fill: false,
+        label: "My First dataset",
         backgroundColor: "rgb(255, 99, 132)",
-        borderColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgb(255, 99, 132)",
+        data: [0, 10, 5, 2, 20, 30, 45],
       },
     ],
   };
-
+  console.log("TestBarChart");
   return (
     <div className="row">
       <Bar data={data} />
     </div>
   );
 };
-
 export default class DonorDashboard extends React.Component {
   state = {
+    content: null,
+    headers: [],
     loading: true,
-    donations: [],
-    projects: [],
-    monetary: [],
-    item: [],
+    settings: {},
+    error: "",
   };
 
-  componentDidMount = async () => {
-    await this.getDonations()
-      .then((response) => {
-        if (response.success) {
-          var monetaryDonation = [];
-          var itemDonation = [];
-
-          console.log("Donations?: ", this.state.donations);
-          this.setState({
-            donations: response.data,
-            loading: false,
-          });
-          // for (val of this.state.donations) {
-          //   console.log(val);
-
-          // }
-
-          response.data.forEach((donation) => {
-            if (donation["DonationType"] === "Monetary") {
-              monetaryDonation.push(donation);
-            } else if (donation["DonationType"] === "Item") {
-              itemDonation.push(donation);
-            }
-          });
-
-          this.setState({
-            monetary: monetaryDonation,
-            item: itemDonation,
-          });
-
-          console.log("Monetary:", this.state.monetary);
-          console.log("Item:", this.state.item);
-        }
-      })
-      .catch((error) => {
-        this.setState({ error: error.message, loading: false });
-      });
-
-    await this.getProjects()
-      .then((response) => {
-        if (response.success) {
-          console.log(response);
-          this.setState({
-            projects: response.data,
-            loading: false,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ error: error.message, loading: false });
-      });
+  settings = {
+    title: "DonorDashboard",
+    primaryColor: "#a6192e",
+    accentColor: "#94795d",
+    textColor: "#ffffff",
+    textColorInvert: "#606060",
+    api: "/api/Donor/",
   };
 
-  getDonations = async () => {
-    var loggedInVol = this.props.user.data;
-    console.log(loggedInVol.UserId);
-    return fetch("/api/DonorDashboard/GetByDonorId/" + loggedInVol.UserId, {
+  async componentDidMount() {
+    await this.getContent().then((content) => {
+      console.log(content);
+      this.setState({
+        content: content,
+      });
+    });
+
+    await this.getSettings().then((settings) => {
+      console.log(settings);
+      this.setState({
+        settings: settings,
+      });
+    });
+
+    this.setState({
+      loading: false,
+    });
+  }
+
+  getSettings = async () => {
+    // fetches http://...:5001/api/User/Settings
+    return fetch(this.settings.api + "Settings", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((response) => {
-      return response.json();
+    }).then((res) => {
+      console.log(res);
+      return res.json();
     });
   };
 
-  getProjects = async () => {
-    return fetch("/api/DonorDashboard/GetProjects", {
+  getContent = async () => {
+    return fetch(this.settings.api + "All", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((response) => {
-      console.log(response);
-      return response.json();
+    }).then((res) => {
+      console.log(res);
+      //Res = {success: true, message: "Success", data: Array(3)}
+      return res.json();
+    });
+  };
+
+  update = async (data) => {
+    console.log(data);
+    return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then(async (res) => {
+      return res.json();
+    });
+  };
+
+  handleUpdate = async (data) => {
+    await this.update(data).then((content) => {
+      if (content.success) {
+        this.setState({
+          error: "",
+        });
+        return true;
+      } else {
+        this.setState({
+          error: content.message,
+        });
+        return false;
+      }
+    });
+  };
+
+  requestRefresh = async () => {
+    this.setState({
+      loading: true,
+    });
+    await this.getContent().then((content) => {
+      console.log(content);
+      this.setState({
+        content: content,
+        loading: false,
+      });
+    });
+  };
+
+  requestError = async (error) => {
+    this.setState({
+      error: error,
     });
   };
 
@@ -186,18 +187,11 @@ export default class DonorDashboard extends React.Component {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center md:flex-row ">
+          <div className="card-group mt-3">
             <Card className="card-style">
               <CardBody>
                 <FaMoneyBillWave className="mr-2 icon-style" />
-                <CardTitle className="card-title">
-                  $
-                  {this.state.monetary.reduce(
-                    (total, donation) =>
-                      total + Number(donation.DonationAmount),
-                    0
-                  )}
-                </CardTitle>
+                <CardTitle className="card-title">$100 000</CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Total Donations
                 </CardSubtitle>
@@ -206,17 +200,7 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaTrophy className="mr-2 icon-style" />
-                <CardTitle className="card-title">
-                  {/* Get highest donation */}$
-                  {this.state.monetary.length > 0
-                    ? Math.max.apply(
-                        Math,
-                        this.state.monetary.map(function (donation) {
-                          return donation.DonationAmount;
-                        })
-                      )
-                    : 0}
-                </CardTitle>
+                <CardTitle className="card-title">$10 000</CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Highest Donation
                 </CardSubtitle>
@@ -225,18 +209,7 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaChartLine className="mr-2 icon-style" />
-                <CardTitle className="card-title">
-                  ${/* Get average donations if no donation display 0*/}
-                  {this.state.monetary.length > 0
-                    ? (
-                        this.state.monetary.reduce(
-                          (total, donation) =>
-                            total + Number(donation.DonationAmount),
-                          0
-                        ) / this.state.monetary.length
-                      ).toFixed(2)
-                    : 0}
-                </CardTitle>
+                <CardTitle className="card-title">$50</CardTitle>
                 <CardSubtitle className="card-subtitle">
                   Average Donation
                 </CardSubtitle>
@@ -245,104 +218,153 @@ export default class DonorDashboard extends React.Component {
             <Card className="card-style">
               <CardBody>
                 <FaProjectDiagram className="mr-2 icon-style" />
-                <CardTitle className="card-title">
-                  # {this.state.donations.length}
-                </CardTitle>
+                <CardTitle className="card-title">#5</CardTitle>
                 <CardSubtitle className="card-subtitle">
-                  Donations Made
+                  Number of Projects Donated
                 </CardSubtitle>
               </CardBody>
             </Card>
           </div>
 
-          <div>
-            <Card>
-              <CardBody>
-                <h3 className="text-start">Donation Analysis</h3>
-                <DonationBarChart donations={this.state.monetary} />
-              </CardBody>
-            </Card>
-          </div>
+          <div className="row justify-content-center p-3">
+            <div className="col-md-7 mt-4">
+              <Card>
+                <CardBody>
+                  <h3 className="text-start p-5">Donation Analysis</h3>
+                  {/* <img
+                    className="card-img"
+                    src={BarChart}
+                    height={420}
+                    alt="Card image"
+                  ></img> */}
+                  <TestBarChart />
+                </CardBody>
+              </Card>
+            </div>
 
-          <div>
-            <Card>
-              <CardBody>
-                <div className="flex flex-row justify-between pt-5">
-                  <h3>Available Projects</h3>
-                  <a href="/DonorAvailableProjects" className="view-all">
-                    View All
-                  </a>
-                </div>
-                {this.state.projects
-                  .slice(Math.max(this.state.projects.length - 4, 0))
-                  .map((project) => (
-                    <div className="pt-5 pb-5">
-                      <h5>{project.ProjectName}</h5>
-                      <p>{project.ProjectDescription}</p>
+            <div className="col-md-5 mt-4">
+              <Card className="p-5">
+                <CardBody>
+                  <div className="d-flex justify-content-between mb-5">
+                    <h3>Available Projects</h3>
+                    <a href="/DonorAvailableProjects" className="view-all">
+                      View All
+                    </a>
+                  </div>
+                  {/*project name and project description and button (center align) align */}
+                  <div className="d-flex justify-content-between mb-5">
+                    <div className="d-flex flex-column">
+                      <h5>Project 1</h5>
+                      <p className="text-muted">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea
+                        commodo consequat.
+                      </p>
                     </div>
-                  ))}
-              </CardBody>
-            </Card>
+                    <a href="/DonorProjectDetails" className="btn view-details">
+                      View
+                    </a>
+                  </div>
+
+                  <div className="d-flex justify-content-between mb-5">
+                    <div className="d-flex flex-column">
+                      <h5>Project 1</h5>
+                      <p className="text-muted">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea
+                        commodo consequat.
+                      </p>
+                    </div>
+                    <a href="/DonorProjectDetails" className="btn view-details">
+                      View
+                    </a>
+                  </div>
+
+                  <div className="d-flex justify-content-between mb-5">
+                    <div className="d-flex flex-column">
+                      <h5>Project 1</h5>
+                      <p className="text-muted">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea
+                        commodo consequat.
+                      </p>
+                    </div>
+                    <a href="/DonorProjectDetails" className="btn view-details">
+                      View
+                    </a>
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
           </div>
 
-          <div>
-            <Card>
-              <CardBody>
-                <div className="flex justify-between">
+          <div className="row justify-content-center">
+            <div className="col-md-12 p-4">
+              <div className="card p-5">
+                <div className="d-flex justify-content-between">
                   <h3>Donation History</h3>
                   <a href="/DonorHistory" class="view-all">
                     View All
                   </a>
                 </div>
-
-                <table className="table-responsive ">
-                  <thead>
-                    <tr>
-                      <th>Donation Type</th>
-                      <th>Donation Amount</th>
-                      <th>Donation Constraint</th>
-                      <th>Donation Date</th>
-                      <th>Project Id</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.monetary.map((donation) => (
-                      <tr key={donation.DonationsId}>
-                        <td>{donation.DonationType}</td>
-                        <td>{donation.DonationAmount}</td>
-                        <td>{donation.DonationConstraint}</td>
-                        <td>{donation.DonationDate}</td>
-                        <td>{donation.ProjectId}</td>
+                <div className="card-body">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <table className="table-responsive ">
-                  <thead>
-                    <tr>
-                      <th>Donation Type</th>
-                      <th>Item Name</th>
-                      <th>Item Description</th>
-                      <th>Item Quantity</th>
-                      <th>Donation Date</th>
-                      <th>Project Id</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.item.map((donation) => (
-                      <tr key={donation.DonationsId}>
-                        <td>{donation.DonationType}</td>
-                        <td>{donation.ItemName}</td>
-                        <td>{donation.ItemDescription}</td>
-                        <td>{donation.ItemQuantity}</td>
-                        <td>{donation.DonationDate}</td>
-                        <td>{donation.ProjectId}</td>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">1</th>
+                        <td>Project X</td>
+                        <td>Online</td>
+                        <td>06/02/2023</td>
+                        <td>$2000</td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardBody>
-            </Card>
+                      <tr>
+                        <th scope="row">2</th>
+                        <td>Project B</td>
+                        <td>Cash</td>
+                        <td>06/02/2023</td>
+                        <td>$2000</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">3</th>
+                        <td>Project A</td>
+                        <td>Online</td>
+                        <td>06/02/2023</td>
+                        <td>$2000</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">4</th>
+                        <td>Project A</td>
+                        <td>Online</td>
+                        <td>06/02/2023</td>
+                        <td>$2000</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">5</th>
+                        <td>Project A</td>
+                        <td>Online</td>
+                        <td>06/02/2023</td>
+                        <td>$2000</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       );

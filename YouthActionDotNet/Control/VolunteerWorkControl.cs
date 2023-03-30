@@ -145,18 +145,6 @@ namespace YouthActionDotNet.Control
         {
             return VolunteerWorkRepositoryOut.GetByID(id) != null;
         }
-        
-        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<VolunteerWork>, IOrderedQueryable<VolunteerWork>> orderBy, int page, int pageSize)
-        {
-            var projects = await VolunteerWorkRepositoryOut.GetAllInPagesAsync(
-                filter : filter, 
-                orderBy: orderBy, 
-                includeProperties: "",
-                page, 
-                pageSize);
-
-            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Volunteer Works Successfully Retrieved" });
-        }
 
         public string Settings()
         {

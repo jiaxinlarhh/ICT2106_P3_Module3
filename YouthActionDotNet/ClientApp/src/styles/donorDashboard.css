@@ -1,56 +1,59 @@
-h1 {
-  font-size: 32px;
+h1{
+    font-size: 32px;
 }
 
-h2 {
-  font-size: 24px;
+h2{
+    font-size: 24px;
 }
 
 h5 {
   font-weight: 500;
 }
 
-thead {
+thead{
   background-color: #dedede;
   color: #000;
 }
-th {
+th{
   font-weight: 700;
   font-size: 16px;
 }
 
 tr {
-  font-size: 16px;
+  font-size: 16px; 
   height: 60px;
-  vertical-align: middle;
+  vertical-align: middle;          
 }
-td {
-  vertical-align: middle;
-  max-width: 700px;
+td{
+  vertical-align: middle;    
 }
-
-.btn-primary {
+    
+.btn-primary
+{
   background-color: #1c2c5b;
-  color: #fff;
+  color: #FFF;
+     
 }
 
 .card-style {
   background-color: #1c2c5b;
-  color: #fff;
+  color: #FFF;
   padding: 10px;
-  width: 260px;
-  height: 180px;
+  width: 250px;
+  height: 150px;
   margin: 10px;
+     
 }
 
 .icon-style {
-  font-size: 40px;
-  margin-bottom: 10px;
+    font-size: 40px;
+    margin-bottom: 10px;
 }
-
-.card-title {
+   
+.card-title{
   font-weight: 700;
   font-size: 30px;
+
 }
 .card-subtitle {
   font-style: italic;
@@ -58,12 +61,12 @@ td {
   opacity: 0.5;
   font-size: 18px;
 }
-.view-all {
+.view-all{
   font-size: 16px;
   font-weight: 500;
   color: #1c2c5b;
 }
-.view-details {
+.view-details{
   font-size: 16px;
   font-weight: 500;
   color: #fff;

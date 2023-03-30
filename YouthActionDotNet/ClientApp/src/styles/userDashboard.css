@@ -1,0 +1,10 @@
+﻿.pie-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.userTable{
+    margin-bottom: 20px;
+}

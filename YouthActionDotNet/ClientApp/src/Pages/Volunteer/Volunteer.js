@@ -201,7 +201,7 @@ export default class Volunteer extends React.Component {
                         
                         return(
                             <div className="volunteer-extended">
-                                <StdButton key={index} style={"btn-error"} onClick={()=>{
+                                <StdButton key={index} className={"secondary"} onClick={()=>{
                                     this.handleRevoke(item.UserId)
                                 }}>Revoke</StdButton>
                             </div>
@@ -211,7 +211,7 @@ export default class Volunteer extends React.Component {
                         
                         return (
                             <div className="volunteer-extended">
-                                <StdButton key={index} style={"btn-success"} onClick={()=>{
+                                <StdButton key={index} onClick={()=>{
                                     this.handleApprove(item.UserId, this.props.user.data)
                                 }}>Approve</StdButton>
                             </div>

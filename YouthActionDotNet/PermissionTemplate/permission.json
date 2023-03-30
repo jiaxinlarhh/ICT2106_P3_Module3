@@ -77,20 +77,6 @@
     "Delete": true
   },
   {
-    "Module": "Report",
-    "Create": true,
-    "Read": true,
-    "Update": true,
-    "Delete": true
-  },
-  {
-    "Module": "DonorDashboard",
-    "Create": true,
-    "Read": true,
-    "Update": true,
-    "Delete": true
-  },
-  {
     "Module": "DonorAvailableProjects",
     "Create": true,
     "Read": true,
@@ -98,21 +84,7 @@
     "Delete": true
   },
   {
-    "Module": "Donate",
-    "Create": true,
-    "Read": true,
-    "Update": true,
-    "Delete": true
-  },
-  {
     "Module": "DonorHistory",
-    "Create": true,
-    "Read": true,
-    "Update": true,
-    "Delete": true
-  },
-  {
-    "Module": "ItemDonations",
     "Create": true,
     "Read": true,
     "Update": true,

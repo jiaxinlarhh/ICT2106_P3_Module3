@@ -244,7 +244,7 @@ export class PermissionsMap extends React.Component {
             <Loading></Loading>
             :
             
-            <div className="flex flex-col gap-4">
+            <div className="container-fluid g-0">
                 {this.state.message != "" ?
                 <div 
                     className={"alert " + (this.state.success ? "alert-success" : "alert-danger")} 
@@ -253,23 +253,22 @@ export class PermissionsMap extends React.Component {
                 :
                 <span></span>
                 }
-                <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+                <div className="row">
                     {this.state.permission.map((item, moduleIndex) => {
-                            return <div className="p-4 md:w-full w-1/2 permission-module-container flex-col flex  border rounded-md">
-                                <div className="flex justify-between align-center">
-                                   <h1 className="font-bold">{item.Module}</h1>
-                                    <IconButtonWithText onClick={()=>this.clear(moduleIndex)} label={"Clear All"} icon={<i className="bi bi-x-circle"></i>}></IconButtonWithText>
+                            return <div className="py-4 col-md-6 col-12 permission-module-container d-flex flex-column">
+                                <div className="permission-module">
+                                    {item.Module}
+                                    <IconButtonWithText className={"invert"} onClick={()=>this.clear(moduleIndex)} label={"Clear All"} icon={<i className="bi bi-x-circle"></i>}></IconButtonWithText>
                                 </div>
-                                <div className="divider"/>
-                                <div className="grid md:grid-cols-4 grid-cols-4">
+                                <div className="row">
                                 {Object.keys(item).slice(1).map((key, index) => {
                                     return(
-                                        <div className="flex flex-col gap-4">
+                                        <div className="d-flex col-3 flex-column permission-toggle-group">
                                             <div className="permission-toggle-label">
                                                 {key}
                                             </div>
                                             <div>
-                                                <input className="toggle toggle-primary" type="checkbox" checked={item[key]} onChange={()=>this.onChange(moduleIndex,key)}></input>
+                                                <input className="form-check-input permission-toggle" type="checkbox" checked={item[key]} onChange={()=>this.onChange(moduleIndex,key)}></input>
                                             </div>
                                         </div>
                                     )
@@ -279,7 +278,7 @@ export class PermissionsMap extends React.Component {
                             </div>
                     })}
                 </div>
-                <StdButton style={"w-full"} onClick={this.handleUpdate}>
+                <StdButton onClick={this.handleUpdate}>
                     Save Changes
                 </StdButton>
             </div>
@@ -376,16 +375,16 @@ class ModuleUpdate extends React.Component{
             :
             
             <div className="container-fluid module-update-container">
-                <div className="flex flex-col items-stretch">
-                    <div className="tabs w-full">
+                <div className="d-flex flex-column">
+                    <div className="module-update-tabs">
                         <div 
-                            className={"tab tab-bordered " + (this.state.currentStep === 0 ? "tab-active" : "")}
+                            className={"module-update-tab " + (this.state.currentStep === 0 ? "active" : "")}
                             onClick={()=>{this.setState({currentStep:0})}}
                         >
                             <div>Add Module</div>
                         </div>
                         <div 
-                            className={"tab tab-bordered " + (this.state.currentStep === 1 ? "tab-active" : "")}
+                            className={"module-update-tab " + (this.state.currentStep === 1 ? "active" : "")}
                             onClick={()=>{this.setState({currentStep:1})}}
                         >
                             <div>Delete Module</div>
@@ -395,37 +394,43 @@ class ModuleUpdate extends React.Component{
                     [{0: "Add Module"},
                     {1: "Delete Module"}]
                     }>
-                        <form className="flex-col flex gap-4 p-4"  onSubmit={this.handleAddModule} >
-                            <h1 className="text-lg font-bold">Add Module</h1>
-                            <StdInput
-                                type="text"
-                                label="Module Name"
-                                onChange={this.moduleOnChange}
-                                enabled = {true}
-                            ></StdInput>
-                            <StdButton style={"w-full"} type={"submit"}>Submit</StdButton>
-                        </form>
-                        
-                        <form className="flex-col flex gap-4 p-4"  onSubmit={this.handleDeleteModule} >
-                            <h1 className="text-lg font-bold">Delete Module</h1>
-                            <StdInput
-                                type="text"
-                                label="Module Name"
-                                onChange={this.moduleOnChange}
-                                enabled = {true}
-                            ></StdInput>
-                            <StdButton type={"submit"}>Submit</StdButton>
-                        </form>
+                        <div className="row module">
+                            <div className="col-12 d-flex flex-column">
+                                <form onSubmit={this.handleAddModule} className="module-form">
+                                    <span className="module-update-header">Add Module</span>
+                                    <StdInput
+                                        type="text"
+                                        label="Module Name"
+                                        onChange={this.moduleOnChange}
+                                        enabled = {true}
+                                    ></StdInput>
+                                    <StdButton type={"submit"}>Submit</StdButton>
+                                </form>
+                            </div>
+                        </div>
+                        <div className="row module">
+                            <div className="col-12 d-flex flex-column">
+                                <form onSubmit={this.handleDeleteModule} className="module-form">
+                                    <span className="module-update-header">Delete Module</span>
+                                    <StdInput
+                                        type="text"
+                                        label="Module Name"
+                                        onChange={this.moduleOnChange}
+                                        enabled = {true}
+                                    ></StdInput>
+                                    <StdButton type={"submit"}>Submit</StdButton>
+                                </form>
+                            </div>
+                        </div>
                     </MultiStepBox>
                         
                 </div>
                 <div className="existing-modules">
-                    <h1 className="text-lg font-bold">Existing Modules</h1>
-                    <div className="divider"/>
-                    <div className="flex modules p-4">
+                    <span className="existing-modules-header">Existing Modules</span>
+                    <div className="d-flex modules p-4">
                         {this.state.modules.map((item,index)=>{
                             return(
-                                <div className="btn btn-primary">
+                                <div className="module-chip">
                                     {item}
                                 </div>
                             )

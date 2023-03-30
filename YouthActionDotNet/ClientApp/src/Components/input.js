@@ -241,7 +241,6 @@ export class StdInput extends React.Component {
     newValue:this.props.type === "multiselect" ? this.props.value ? this.props.value : [] : this.props.value,
     valueChanged: false,
     feedbackClass: "feedback",
-    showFeedback: false,
   };
   componentDidMount() {
     this.setState({
@@ -294,13 +293,11 @@ export class StdInput extends React.Component {
     console.log(message);
     if(message.success){
       this.setState({
-        showFeedback: true,
         feedbackClass: "feedback show",
         feedback: message.msg
       })
     }else{
       this.setState({
-        showFeedback: true,
         feedbackClass: "feedback failed show",
         feedback: message.msg
       })
@@ -309,7 +306,6 @@ export class StdInput extends React.Component {
 
   reset =() => {
     this.setState({
-        showFeedback: false,
         feedbackClass: "feedback",
         feedback: ""
     })
@@ -317,21 +313,17 @@ export class StdInput extends React.Component {
   render() {
     if (this.state.enabled) {
       return (
-        <div className={"form-control border-transparent w-full relative"}>
+        <div className={"inputBox " + (this.props.sameLine ? "same-line" : "") + (this.props.type === "file" ? "file" : "")}>
           {this.props.label !== "hidden" && (
-            <label className="label">
-              <span className = "label-text">{this.props.label}</span>
-              {/* {(this.props.toolTip !== null && this.props.toolTip) && (
-              
-                <div className="label-text-alt tooltip tooltip-left" data-tip={this.props.toolTip}>
-                <button className="btn">
-                  <i className="bi bi-info-circle-fill"></i>
-                </button>
+            <div className="inputBox-Label">{this.props.label}:
+            {(this.props.toolTip !== null && this.props.toolTip) && (
+              <div className="inputToolTip">
+                <i class="bi bi-info-circle-fill"></i>
+                <div className="inputToolTip-text">{this.props.toolTip}</div>
+              </div>
+            )}
             </div>
-            )} */}
-            </label>
           )}
-          <label className="input-group w-full grow">
           {this.props.type === "text" && (
             <StdTextBox
               valueChanged={this.state.valueChanged}
@@ -448,47 +440,38 @@ export class StdInput extends React.Component {
             </StdFileBox>
           )}
           {this.props.hasSaveBtn && this.state.valueChanged && (
-            
-            <button className="btn btn-square" 
+            <div
+              className="inputSave"
               onClick={() => {
                 this.handleSave(this.state.newValue);
               }}
-              >
-              <i className="bi bi-check-circle"></i> 
-            </button>
-            // <div
-            //   className="inputSave"
-            //   onClick={() => {
-            //     this.handleSave(this.state.newValue);
-            //   }}
-            // >
-            // </div>
-          )}
-          {this.state.showFeedback && (
-            <div className={this.state.feedbackClass} onAnimationEnd={this.reset}>
-              {this.state.feedback}
+            >
+              <i className="bi bi-check-circle"></i>
             </div>
           )}
-          </label>
+          <div className={this.state.feedbackClass} onAnimationEnd={this.reset}>
+            {this.state.feedback}
+          </div>
         </div>
       );
     } else {
       return (
-        <div className="form-control w-full border-transparent"  onClick={this.toggleEdit}>
-          <label className="label">
-            <span className="label-text">{this.props.label}</span>
-          </label>
-          <input type="text" placeholder="" value={
-            this.props.type === "dropdown" ? 
-            !isNaN(this.state.value) ?
-              (this.props.options.find(option => option.value == parseInt(this.props.value)) 
-                ? 
-                this.props.options.find(option => option.value == parseInt(this.props.value)).label 
-                : 
-                "") 
-            : this.props.options.find(option => option.value == this.props.value).label
-          : this.props.value
-          }className="input input-bordered input-primary w-full" disabled />
+        <div onClick={this.toggleEdit} className={"inputBox disabled"}>
+          <div className="inputBox-Label">{this.props.label}</div>
+          <div className="read-only">
+            {this.props.type === "dropdown" ? 
+              !isNaN(this.state.value) ?
+                (this.props.options.find(option => option.value == parseInt(this.props.value)) 
+                  ? 
+                  this.props.options.find(option => option.value == parseInt(this.props.value)).label 
+                  : 
+                  "") 
+              : this.props.options.find(option => option.value == this.props.value).label
+            : this.props.value
+            }
+            </div>
+
+          {/* {this.props.showIndicator && <i className="bi bi-pencil "></i>} */}
         </div>
       );
     }
@@ -521,9 +504,15 @@ class StdTextBox extends React.Component {
 
   render() {
     return (
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="text"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
@@ -531,6 +520,38 @@ class StdTextBox extends React.Component {
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
         ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -556,16 +577,54 @@ class StdPwdBox extends React.Component {
 
   render() {
     return (
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="password"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -599,17 +658,54 @@ class StdDateBox extends React.Component {
   }
   render() {
     return (
-      
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="date"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -635,18 +731,54 @@ class StdTimeBox extends React.Component {
 
   render() {
     return (
-      
-      
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="time"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -672,18 +804,54 @@ class StdDateTimeBox extends React.Component {
 
   render() {
     return (
-      
-      
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="datetime-local"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -709,18 +877,54 @@ class StdEmailBox extends React.Component {
 
   render() {
     return (
-      
-      
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="email"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -755,18 +959,56 @@ class StdNumberBox extends React.Component {
 
   render() {
     return (
-      
-      
-      <input
-          className="input input-primary input-bordered grow"
-          disabled={this.props.editable}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
           type="number"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
           value={this.state.newValue}
-      ></input>
+          min = {this.props.min}
+          max = {this.props.max}
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -810,24 +1052,64 @@ class StdDropDownBox extends React.Component {
 
   render() {
     return (
-      <select className="select select-primary grow"
-      type="dropdown"
-      ref={this.primaryInput}
-      autoComplete={this.props.autoComplete}
-      placeholder={""}
-      onChange={(e) => this.onChange(e)}
-      value={String(this.state.newValue)}
-      defaultValue = {this.props.allowEmpty ? "" : this.props.options[0].value}
-      required={this.props.required}
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
       >
-        
-        {this.props.allowEmpty ? <option disabled selected></option> : ""}
-        {this.props.options.map((option,index) => {
-          return <option 
-          key={index} 
-          value={option.value}>{option.label}</option>
-        })}
-      </select>
+        <select
+          className="stdInput dropdown"
+          type="dropdown"
+          ref={this.primaryInput}
+          autoComplete={this.props.autoComplete}
+          placeholder={""}
+          onChange={(e) => this.onChange(e)}
+          value={String(this.state.newValue)}
+          defaultValue = {this.props.allowEmpty ? "" : this.props.options[0].value}
+          required={this.props.required}
+        >
+          {this.props.allowEmpty ? <option className="emptyDefault" value=""></option> : ""}
+          {this.props.options.map((option,index) => {
+            return <option 
+            className="dropdownOptions" 
+            key={index} 
+            value={option.value}>{option.label}</option>
+          })}
+        </select>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+      </div>
     );
   }
 }
@@ -880,7 +1162,7 @@ class StdMultiSelect extends React.Component {
     return (
       <div
         className={
-          "stdInputGroup flex items-center" +
+          "stdInputGroup d-flex align-items-center" +
           " " +
           (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
@@ -1072,21 +1354,62 @@ class StdFileBox extends React.Component{
   render() {
     return (
       this.state.loading ? 
-      <progress class="progress progress-primary w-full"></progress>
+      <Loading></Loading>
       :
-      <div className="flex flex-col gap-4 w-full">
+      <div
+        className={
+          "stdInputGroup file d-flex align-items-center" +
+          " " +
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
         {this.state.value &&
         <FileThumbnail file={this.state.file}></FileThumbnail>
         }
-        <input
-          id={this.props.fieldLabel}
-          className="file-input file-input-bordered file-input-primary w-full grow"
-          type="file"
-          ref={this.primaryInput}
-          autoComplete={this.props.autoComplete}
-          placeholder={""}
-          onChange={(e) => this.onChange(e)}
-        ></input>
+        <label htmlFor={this.props.fieldLabel} className="stdInput">
+          Click here to select a file
+          <input
+            id={this.props.fieldLabel}
+            className="stdInput-file"
+            type="file"
+            ref={this.primaryInput}
+            autoComplete={this.props.autoComplete}
+            placeholder={""}
+            onChange={(e) => this.onChange(e)}
+          ></input>
+          
+        </label>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
          
       </div>
     );
@@ -1099,8 +1422,7 @@ export class FileThumbnail extends React.Component{
   }
 
 
-  toggleModal = (e) =>{
-    e.preventDefault();
+  toggleModal = () =>{
     this.setState({
       showModal: !this.state.showModal
     })

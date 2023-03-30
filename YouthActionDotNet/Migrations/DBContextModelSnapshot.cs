@@ -22,8 +22,10 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("DonationsId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
+                    b.Property<string>("DonationAmount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DonationConstraint")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DonationDate")
@@ -45,10 +47,6 @@ namespace YouthActionDotNet.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Donations", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Donations");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.Expense", b =>
@@ -140,19 +138,19 @@ namespace YouthActionDotNet.Migrations
                     b.Property<double>("ProjectBudget")
                         .HasColumnType("REAL");
 
-                    b.Property<DateTime>("ProjectCompletionDate")
+                    b.Property<string>("ProjectCompletionDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ProjectEndDate")
+                    b.Property<string>("ProjectEndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ProjectStartDate")
+                    b.Property<string>("ProjectStartDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectStatus")
@@ -169,33 +167,6 @@ namespace YouthActionDotNet.Migrations
                     b.HasIndex("ServiceCenterId");
 
                     b.ToTable("Project", (string)null);
-                });
-
-            modelBuilder.Entity("YouthActionDotNet.Models.Report", b =>
-                {
-                    b.Property<string>("ReportId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ReportDateCreation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ReportEndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ReportName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ReportStartDate")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ReportId");
-
-                    b.HasIndex("FileId");
-
-                    b.ToTable("Report", (string)null);
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
@@ -254,10 +225,10 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("VolunteerWorkId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ShiftEnd")
+                    b.Property<string>("ShiftEnd")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ShiftStart")
+                    b.Property<string>("ShiftStart")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SupervisingEmployee")
@@ -278,38 +249,6 @@ namespace YouthActionDotNet.Migrations
                     b.HasIndex("projectId");
 
                     b.ToTable("VolunteerWork", (string)null);
-                });
-
-            modelBuilder.Entity("YouthActionDotNet.Models.ItemDonations", b =>
-                {
-                    b.HasBaseType("YouthActionDotNet.Models.Donations");
-
-                    b.Property<string>("ItemDescription")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ItemName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ItemQuantity")
-                        .HasColumnType("TEXT");
-
-                    b.HasDiscriminator().HasValue("ItemDonations");
-                });
-
-            modelBuilder.Entity("YouthActionDotNet.Models.MonetaryDonations", b =>
-                {
-                    b.HasBaseType("YouthActionDotNet.Models.Donations");
-
-                    b.Property<string>("DonationAmount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DonationConstraint")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("TEXT");
-
-                    b.HasDiscriminator().HasValue("MonetaryDonations");
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.Donor", b =>
@@ -349,6 +288,11 @@ namespace YouthActionDotNet.Migrations
 
                     b.Property<string>("PAYE")
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("ServiceCenterName")
+                        .HasColumnType("TEXT");
+
+                    b.HasIndex("ServiceCenterName");
 
                     b.ToTable("Employee", (string)null);
                 });
@@ -431,15 +375,6 @@ namespace YouthActionDotNet.Migrations
                     b.Navigation("ServiceCenter");
                 });
 
-            modelBuilder.Entity("YouthActionDotNet.Models.Report", b =>
-                {
-                    b.HasOne("YouthActionDotNet.Models.File", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId");
-
-                    b.Navigation("File");
-                });
-
             modelBuilder.Entity("YouthActionDotNet.Models.ServiceCenter", b =>
                 {
                     b.HasOne("YouthActionDotNet.Models.Employee", "RegionalDirector")
@@ -483,11 +418,17 @@ namespace YouthActionDotNet.Migrations
 
             modelBuilder.Entity("YouthActionDotNet.Models.Employee", b =>
                 {
+                    b.HasOne("YouthActionDotNet.Models.ServiceCenter", "ServiceCenter")
+                        .WithMany()
+                        .HasForeignKey("ServiceCenterName");
+
                     b.HasOne("YouthActionDotNet.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ServiceCenter");
 
                     b.Navigation("User");
                 });

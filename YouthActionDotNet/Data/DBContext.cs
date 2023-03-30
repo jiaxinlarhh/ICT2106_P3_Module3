@@ -16,6 +16,10 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId);
+        modelBuilder.Entity<Employee>().ToTable("Employee")
+            .HasOne(e => e.ServiceCenter)
+            .WithMany()
+            .HasForeignKey(e => e.ServiceCenterName);
         modelBuilder.Entity<Volunteer>().ToTable("Volunteer")
             .HasOne(e => e.User)
             .WithMany().IsRequired(false)
@@ -70,42 +74,7 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.project)
             .WithMany()
             .HasForeignKey(e => e.ProjectId);
-        modelBuilder.Entity<MonetaryDonations>()
-            .HasOne(e => e.donor)
-            .WithMany()
-            .HasForeignKey(e => e.DonorId);
-        modelBuilder.Entity<MonetaryDonations>()
-            .HasOne(e => e.project)
-            .WithMany()
-            .HasForeignKey(e => e.ProjectId);
-        modelBuilder.Entity<ItemDonations>()
-            .HasOne(e => e.donor)
-            .WithMany()
-            .HasForeignKey(e => e.DonorId);
-        modelBuilder.Entity<ItemDonations>()
-            .HasOne(e => e.project)
-            .WithMany()
-            .HasForeignKey(e => e.ProjectId);
-        modelBuilder.Entity<MonetaryDonations>()
-            .HasOne(e => e.donor)
-            .WithMany()
-            .HasForeignKey(e => e.DonorId);
-        modelBuilder.Entity<MonetaryDonations>()
-            .HasOne(e => e.project)
-            .WithMany()
-            .HasForeignKey(e => e.ProjectId);
-        modelBuilder.Entity<ItemDonations>()
-            .HasOne(e => e.donor)
-            .WithMany()
-            .HasForeignKey(e => e.DonorId);
-        modelBuilder.Entity<ItemDonations>()
-            .HasOne(e => e.project)
-            .WithMany()
-            .HasForeignKey(e => e.ProjectId);
-        modelBuilder.Entity<Report>().ToTable("Report")
-            .HasOne(e => e.File)
-            .WithMany()
-            .HasForeignKey(e => e.FileId);
         }
+        
     }
 }

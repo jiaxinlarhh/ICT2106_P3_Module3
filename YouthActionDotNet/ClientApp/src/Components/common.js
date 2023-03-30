@@ -6,9 +6,6 @@ import moment from "moment";
 
 import footer from "../Assets/footer.png";
 import { Loading } from "./appCommon";
-import { StdInput } from "./input";
-
-import {CSVLink} from "react-csv";
 
 export class DivSpacing extends React.Component {
     state = {
@@ -184,7 +181,6 @@ export class SearchBar extends React.Component {
     }
 
     setPrimaryInput(tag) {
-        console.log(tag)
         this.setState({
             selectedTag: tag.value,
             tagType: tag.type,
@@ -238,43 +234,113 @@ export class SearchBar extends React.Component {
 
         return (
             <div className={this.props.className}>
-                <div className={"flex justify-end items-center"}>
+                <div className={" justify-content-end d-flex align-items-center"}>
                     <div className="searchBar">
                         <SearchButton onClick={this.toggle} className={this.props.invert ? "invert" : ""} icon={<i className="bi bi-search"></i>} toolTip={this.props.toolTip} showToolTip={this.state.showToolTip} onMouseEnter={this.toggleToolTip} onMouseLeave={
                             this.toggleToolTip}></SearchButton>
 
-                    </div>
-                    
-                            
-                    <div className={"dropdown dropdown-end SearchFieldGroup " + this.state.inputClasses} onAnimationEnd={this.focus}>
-                        <div className="form-control bg-transparent border-transparent p-0">
-                            <div className="input-group">
-                            {this.state.selectedTag !== "" &&
-                                <SearchTags showEdit={false} onCancelClick={this.onCancelClick} type={this.state.tagType}>{this.state.selectedTag}</SearchTags>
-                            }
-                            <input
-                                tabindex="0" 
-                                type={"text"}
-                                className={"input input-primary border-transparent hover:border-transparent text-base-content " + (this.state.expanded ? "w-full" : "w-0")}
-                                placeholder={this.state.placeholder}
-                                ref={this.searchInput} 
-                                onChange={this.handleSearchQueryChange}
-                                onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.searchInput.current.value })}></input>
+                    </div>{this.state.selectedTag !== "" &&
+                        <SearchTags showEdit={false} onCancelClick={this.onCancelClick} type={this.state.tagType}>{this.state.selectedTag}</SearchTags>
+                    }
+                    <div className={"d-flex align-items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
+                        <input type={"text"} className={"SearchField"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.state.selectedTag + "(" + this.searchInput.current.value + ")" })}></input>
+                        {this.state.selectedTag === "" &&
+                            <div className={"dropdown "} style={{ "--maxItems": 5, "gridTemplateColumns": ["@", ":", "+", "#"].includes(this.state.searchQuery[0]) ? "1fr" : "" }}>
+                                {(this.state.searchQuery[0] === ":" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
+                                    <div className="macros">
+                                        <div className="d-flex tagDescListTile macros">
+                                            <div className="icon macros">
+                                                :
+                                            </div>
+                                            <div className="tagDesc macros">
+                                                <h6 className="macros">:MacroName</h6>
+                                                <p>
+                                                    Predefined macros for quick and easy search filtering.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {this.state.macrosSuggestion.length === 0 ?
+                                            <div className="noMacrosPlaceHolder">
+                                                There are no macros created. Click below to create a new macro.
+                                                <StdButton onClick={() => this.props.toggleTagMacros("tm")} className={"primary"}>Create New Macro</StdButton>
+                                            </div>
+                                            :
+                                            <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
+                                                {this.state.macrosSuggestion.map((option, index) => {
+                                                    if (((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type !== "specific" && option.type !== "multiple")) {
+                                                        return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.searchCallBack({ type: option.type, value: option.value })}>{option.label}</StdInputDropDownOption>
+                                                    }
+                                                    return "";
+                                                })}
+                                            </div>
+                                        }
+
+
+                                    </div>
+                                }
+                                {(this.state.searchQuery[0] === "@" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
+
+                                    <div className="specific">
+                                        <div className="d-flex tagDescListTile specific">
+                                            <div className="icon specific">
+                                                @
+                                            </div>
+                                            <div className="tagDesc specific">
+                                                <h6 className="specific">@column(interest)</h6>
+                                                <p>
+                                                    Targets specific column, only return entries with column value like interest
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
+                                            {this.state.specificSuggestion.map((option, index) => {
+                                                if ((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type === "specific") {
+                                                    return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.setPrimaryInput(option)}>{option.label}</StdInputDropDownOption>
+                                                }
+                                                return "";
+                                            }
+                                            )}
+                                        </div>
+                                    </div>
+                                }
+                                {(this.state.searchQuery[0] === "+" || !["@", ":", "+", "#"].includes(this.state.searchQuery[0]) || this.state.searchQuery === "") &&
+                                    <div className="multiple">
+                                        <div className="d-flex tagDescListTile multiple">
+                                            <div className="icon multiple">
+                                                +
+                                            </div>
+                                            <div className="tagDesc multiple">
+                                                <h6 className="multiple">+column(interest)</h6>
+                                                <p>
+                                                    Multiple targeting of specific column, returns entries with column value like interestA or interestB
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="row row-cols-xs-3 row-cols-md-2 row-cols-lg-3 row-cols-1 searchSuggestions">
+                                            {this.state.multipleSuggestion.map((option, index) => {
+                                                if ((option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") && option.type === "multiple") {
+                                                    return <StdInputDropDownOption key={index} value={option.value} onClick={() => this.setPrimaryInput(option)}>{option.label}</StdInputDropDownOption>
+                                                }
+                                                return "";
+                                            }
+                                            )}
+                                        </div>
+                                    </div>
+                                }
+
                             </div>
-                        </div>
-                        
-                        {this.state.selectedTag === "" ?
-                            <div tabindex="0" class="menu dropdown-content bg-base-100 p-2 shadow grid grid-cols-3 rounded-box w-full mt-2 p-1">
-                            {this.props.suggestions.map((suggestion, index) => {
-                                return <div className="btn btn-ghost justify-start text-base-content"
-                                            onClick={() => this.setPrimaryInput({type: suggestion, value: suggestion})}
-                                            key={index}>
-                                            {suggestion}
-                                        </div> 
-                            })}
+                        }
+                        {this.state.selectedTag !== "" &&
+                            <div className="dropdown row" style={{ "--maxItems": 5 }}>
+                                {this.state.suggestions.map((option, index) => {
+                                    if (option.label.toLowerCase().includes(this.state.searchQuery.toLowerCase()) || this.state.searchQuery === "") {
+                                        return <StdInputDropDownOption className={"col-12 col-md-6 col-lg-3"} key={index} value={option.value} onClick={() => this.searchCallBack({ type: this.state.tagType, value: this.state.selectedTag + "(" + option.value + ")" })}>{option.label}</StdInputDropDownOption>
+                                    }
+                                    return "";
+                                }
+                                )}
                             </div>
-                            :
-                            ""
                         }
                     </div>
                 </div>
@@ -388,11 +454,11 @@ export class StdSearchBar extends React.Component {
 
         return (
             <div className={this.props.className}>
-                <div className={"flex items-center justify-end"}>
+                <div className={" justify-content-end d-flex align-items-center"}>
                     <div className="searchBar">
                         <SearchButton onClick={this.toggle} className={this.props.invert ? "invert" : ""} hasToolTip={false} icon={<i className="bi bi-search"></i>}></SearchButton>
                     </div>
-                    <div className={"flex items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
+                    <div className={"d-flex align-items-center " + this.state.inputClasses} onAnimationEnd={this.focus}>
                         <input type={"text"} className={"SearchField"} placeholder={this.state.placeholder} ref={this.searchInput} onChange={this.handleSearchQueryChange} onKeyDown={(e) => this.handleKeydown(e, { type: this.state.tagType, value: this.state.selectedTag + "(" + this.searchInput.current.value + ")" })}></input>
 
                         {this.props.children}
@@ -410,9 +476,19 @@ StdSearchBar.defaultProps = {
 export class SearchButton extends React.Component {
     render() {
         return (
-            <button className={"btn btn-square btn-ghost hover:text-accent"} onClick={this.props.onClick} style={{ width: this.props.size, height: this.props.size }} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
-                {this.props.icon}
-            </button>
+            <SizedBox width={this.props.size} height={this.props.size} className={"searchButton"} >
+                <button className={"iconButton " + this.props.className} onClick={this.props.onClick} style={{ width: this.props.size, height: this.props.size }} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
+                    {this.props.icon}
+                </button>
+                {this.props.hasToolTip &&
+
+                    <div className="tooltiptext">
+                        {this.props.toolTip}
+
+                    </div>
+                }
+
+            </SizedBox>
         )
     }
 }
@@ -551,56 +627,128 @@ ActionsButton.defaultProps = {
 export class IconButton extends React.Component {
     render() {
         return (
-            
-            <button className={"btn btn-ghost btn-square  hover:text-accent"} onClick={this.props.onClick} title={this.props.title}>
-                {this.props.icon}
-            </button>
+            <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
+                <button className={"iconButton " + this.props.className} onClick={this.props.onClick} title={this.props.title}>
+                    {this.props.icon}
+                </button>
+            </SizedBox>
         )
     }
+}
+IconButton.defaultProps = {
+    className: "",
+    size: "32px",
 }
 export class IconButtonAsLink extends React.Component {
     render() {
         return (
-            <Link className={"btn btn-ghost btn-square hover:text-accent"} to={this.props.to} onClick={this.props.onClick} title={this.props.title}>
-                {this.props.icon}
-            </Link>
+            <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
+                <Link to={this.props.to} className={"iconButton " + this.props.className} onClick={this.props.onClick} title={this.props.title}>
+                    {this.props.icon}
+                </Link>
+            </SizedBox>
         )
     }
 }
+IconButtonAsLink.defaultProps = {
+    className: "",
+    size: "32px",
+}
+
 export class IconButtonWithText extends React.Component {
     render() {
         return (
-            <button className={"btn btn-ghost gap-2 " + this.props.className} onClick={this.props.onClick}>
-                <div>
-                    {this.props.icon}
-                </div>
+            <button className={"align-items-center d-flex justify-content-center iconButton " + this.props.className} onClick={this.props.onClick}>
+                <SizedBox width={this.props.size} height={this.props.size} className={"align-items-center d-flex justify-content-center "}>
+                    <div>
+                        {this.props.icon}
+                    </div>
+                </SizedBox>
                 {this.props.label}
             </button>
         )
     }
 }
+IconButtonWithText.defaultProps = {
+    className: "",
+    size: "32px",
+}
 
 export class SearchTags extends React.Component {
+    TagType = { DEFAULT: "DEFAULT", SPECIFIC: "SPECIFIC", MULTIPLE: "MULTIPLE", EXCLUDE: "EXCLUDE" }
+    constructor(props) {
+        super(props);
+        this.state = {
+            type: this.TagType.DEFAULT,
+            mode: "desktop",
+            showTagOverlay: false
+        }
 
-    onEditClick = (e) => {
-        e.preventDefault();
-        this.props.onEditClick();
+        this.toggleDelete = this.toggleDelete.bind(this);
     }
 
-    onCancelClick = (e) => {
-        e.preventDefault();
-        this.props.onCancelClick();
+    componentDidMount() {
+        window.addEventListener("resize", this.resize.bind(this));
+        this.resize();
+    }
+
+    resize() {
+        const md = 768;
+        if (window.innerWidth < md) {
+            this.setState({ mode: "mobile" })
+        } else {
+            this.setState({ mode: "desktop" })
+        }
+    }
+
+    toggleDelete() {
+        this.setState({
+            showTagOverlay: !this.state.showTagOverlay
+        })
     }
 
     render() {
+        let type = " default";
+        switch (this.props.type) {
+            case "default": type = " default"; break;
+            case "specific": type = " specific"; break;
+            case "multiple": type = " multiple"; break;
+            case "exclude": type = " exclude"; break;
+            case "truncator": type = " truncator"; break;
+            case "base": type = " base"; break;
+            default: type = " default"; break;
 
-        return (
+        }
+        if (type === " truncator") {
+            return (
+                <div className={"searchTag" + type}>
+                    <span>{this.props.children}</span>
+                </div>
+            )
+        }
 
-        <div className={"btn btn-accent flex items-center swap-off gap-4"}>
-            {this.props.children}
-            <i className="bi bi-x-circle" onClick={(e)=>this.onCancelClick(e)}></i>
-        </div>
-        )
+        if (this.state.mode === "mobile") {
+            return (
+                <div className={"searchTag d-flex align-items-center" + type}>
+                    <span>{this.props.children}</span>
+                    {this.props.showRemove ?
+                        <div className={"searchTag-delete"} onClick={this.props.onCancelClick} ><i className="bi bi-x"></i></div> : <div />}
+                </div>
+            )
+        } else {
+            return (
+
+                <div className={"searchTag searchTag-desktop d-flex align-items-center" + type}>
+                    {this.props.showRemove ? <div className={"searchTag-deleteOverlay"}>
+                        <i className="bi bi-pencil" onClick={this.props.onEditClick}></i>
+                        <i className="bi bi-x-circle" onClick={this.props.onCancelClick}></i>
+                    </div> : <div />
+                    }
+
+                    <span>{this.props.children}</span>
+                </div>
+            )
+        }
     }
 }
 
@@ -609,32 +757,182 @@ SearchTags.defaultProps = {
 }
 
 export class TagsBox extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            maxTags: 3,
+            startX: 0,
+            endX: 0,
+            slideClass: "",
+            slideProgression: 0,
+        }
+        this.handleTouchStart = this.handleTouchStart.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
+    }
     componentDidMount() {
+        window.addEventListener("resize", this.resize.bind(this));
+        this.resize();
+    }
+
+    handleTouchStart = (e) => {
+
+        this.setState({
+            startX: e.touches[0].clientX,
+            slideClass: "sliding",
+            slideProgression: 0,
+        }
+        )
+        console.log(e.touches[0].clientX);
+    }
+
+    handleMouseDown = (e) => {
+        this.setState({
+            startX: e.clientX,
+            slideClass: "sliding",
+            slideProgression: 0,
+        })
+    }
+
+    handleTouchMove = (e) => {
+        this.setState({
+            endX: e.touches[0].clientX,
+            slideProgression: (this.state.endX - this.state.startX) + "px",
+        })
+        console.log(e.touches[0].clientX);
+    }
+
+    handleMouseMove = (e) => {
+        if (this.state.startX - this.state.endX > -150) {
+
+            this.setState({
+                endX: e.clientX,
+                slideProgression: (this.state.endX - this.state.startX) + "px",
+            })
+        }
+    }
+
+    handleTouchEnd = (e) => {
+        console.log("END")
+        if (this.state.startX - this.state.endX < -150) {
+            this.setState({
+                slideClass: "",
+                slideProgression: 0,
+            })
+            this.props.deleteAllTags();
+        }
+    }
+
+    handleMouseUp = (e) => {
+        if (this.state.startX - this.state.endX < -150) {
+            this.setState({
+                slideClass: "",
+                slideProgression: 0,
+            })
+            this.props.deleteAllTags();
+        }
+    }
+
+    resize() {
+        const sm = 576;
+        const md = 768;
+        const lg = 992;
+        const xl = 1200;
+        const xxl = 1600;
+        if (window.innerWidth >= xxl) {
+            this.setState({
+                maxTags: -1
+            })
+        } else if (window.innerWidth >= xl) {
+            this.setState({
+                maxTags: 6
+            })
+        } else if (window.innerWidth >= lg) {
+            this.setState({
+                maxTags: 5
+            })
+        } else if (window.innerWidth >= md) {
+            this.setState({
+                maxTags: 4
+            })
+        } else if (window.innerWidth >= sm) {
+            this.setState({
+                maxTags: 3
+            })
+        } else if (window.innerWidth < sm) {
+            this.setState({
+                maxTags: 3
+            })
+        }
     }
 
     render() {
+        const tags = React.Children.count(this.props.children);
+        const tagsList = React.Children.toArray(this.props.children);
         if (React.Children.count(this.props.children) === 0) {
             return (
-                <div className={"flex items-center tagsBox flex-wrap justify-start " + this.props.className} onClick={this.props.onClick}>
+                <div className={"d-flex align-items-center tagsBox flex-wrap justify-content-start " + this.props.className} onClick={this.props.onClick}>
                     <h1>No Tags yet</h1>
                 </div>
             )
         }
-        
-        return (
-           
-            <div className={"flex gap-4"} >
-                {this.props.showlabel &&
-                <div class="dropdown dropdown-bottom">
-                    <label tabindex="0" className="btn btn-ghost swap-off">Search Tags:</label>
-                    <div tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 mt-2 rounded-box w-52">
-                        <button className="btn btn-ghost" onClick={this.props.deleteAllTags}>Clear Tags</button>
+        if (!this.props.truncate || this.state.maxTags === -1) {
+            if (window.innerWidth < 768) {
+                return (
+                    <div>
+                        {this.props.enableDeleteAll &&
+                            <span className="instructions">Slide right to delete all tags</span>
+                        }
+                        <div className="tagsContainer">
+                            <div className={"d-flex align-items-center tagsBox flex-wrap justify-content-start " + this.props.className + " " + this.state.slideClass}
+                                onClick={this.props.onClick}
+                                onTouchStart={this.handleTouchStart}
+                                onMouseDown={this.handleMouseDown}
+                                onTouchMove={this.handleTouchMove}
+                                onMouseMove={this.handleMouseMove}
+                                onTouchEnd={this.handleTouchEnd}
+                                onMouseUp={this.handleMouseUp}
+                                style={{ "--slideDistance": this.state.slideProgression }}>
+                                {this.props.showlabel &&
+                                    <div className="tagboxLabel" style={{ color: "black" }}>Search Tags:</div>
+                                }
+                                {this.props.children}
+                            </div>
+                            <div className="text-left deleteBg" >
+
+                                <i className="bi bi-trash3-fill"></i> Delete All
+                            </div>
+                        </div>
                     </div>
+                )
+            } else {
+                return (
+                    <div className="tagsContainer">
+                        <div className={"d-flex align-items-center tagsBox flex-wrap justify-content-start " + this.props.className + " " + (this.props.enableDeleteAll && " tagsBox-desktop")} >
+                            {this.props.showlabel &&
+                                <div className="tagboxLabel" style={{ color: "black" }}>Search Tags:</div>
+                            }
+                            {this.props.children}
+                        </div>
+                        <div className="text-left deleteBg" onClick={this.props.deleteAllTags}>
+                            <div className="deleteBtn">
+                                <i className="bi bi-trash3-fill"></i>
+                                <span>Delete All</span>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+        } else {
+            return (
+
+                <div className={"d-flex tagsBox flex-wrap justify-content-start " + this.props.className} onClick={this.props.onClick} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd}>
+                    {tags > this.state.maxTags ? tagsList.slice(0, this.state.maxTags) : this.props.children}
+                    {tags > this.state.maxTags ? <SearchTags className={"align-self-stretch"} type={"truncator"} showRemove={false}>({tags - this.state.maxTags}) More...</SearchTags> : <div></div>}
                 </div>
-                }
-                {this.props.children}
-            </div>
-        )
+            )
+        }
     }
 }
 
@@ -675,21 +973,54 @@ export class CheckBox extends React.Component {
 }
 
 export class StdButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.getPos = this.getPos.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.ripple = this.ripple.bind(this);
+        this.reset = this.reset.bind(this);
+        this.btnRef = React.createRef();
+        this.state = {
+            ripplePosX: 0,
+            ripplePosY: 0,
+            classes: ""
+        }
+    }
+
+
+    getPos = (e) => {
+        this.setState({
+            ripplePosX: e.clientX - this.btnRef.current.getBoundingClientRect().left,
+            ripplePosY: e.clientY - this.btnRef.current.getBoundingClientRect().top
+        })
+    }
+    reset() {
+        this.setState({
+            classes: ""
+        })
+    }
+
     handleClick = (e) => {
+        this.getPos(e);
+        this.setState({ classes: "ripple" })
         this.props.onClick();
     }
 
+    ripple = (e) => {
+        this.getPos(e);
+        this.setState({ classes: "ripple" })
+    }
 
     render() {
 
 
         return (
             <button
-                className={"btn " + this.props.style}
+                className={"button " + this.state.classes + " " + this.props.className}
+                style={{ "--x": this.state.ripplePosX + "px", "--y": this.state.ripplePosY + "px" }}
                 onClick={this.handleClick}
                 disabled={this.props.disabled}
                 onAnimationEnd={this.reset}
-                type={this.props.type}
                 ref={this.btnRef}>
                 {this.props.children}
             </button>
@@ -743,33 +1074,21 @@ export class MultiStepBox extends React.Component {
 
     render() {
         return (
-            <div className="w-full">
+            <div className="Multistep-Container">
                 {this.props.children.map((child, index) => {
                     if (React.isValidElement(child) && index === this.state.currentStep) {
                         return (
-                            <div key={index} className={"step w-full " + (index === this.state.currentStep ? "active" : "")}>
+                            <div key={index} className={"step " + (index === this.state.currentStep ? "active" : "")}>
                                 {React.cloneElement(child, { nextStep: this.nextStep, prevStep: this.prevStep, setStep: this.setStep })}
                             </div>
                         )
                     } else {
-                        return <div key={index} className={"step i w-full " + (index === this.state.currentStep ? "active" : "")} nextStep={this.nextStep} prevStep={this.prevStep} setStep={this.setStep}>
+                        return <div key={index} className={"step  i " + (index === this.state.currentStep ? "active" : "")} nextStep={this.nextStep} prevStep={this.prevStep} setStep={this.setStep}>
                         </div>
                     }
                 })}
             </div>
         )
-    }
-}
-
-export class Stepv2 extends React.Component {
-    render(){
-        if(this.props.step){
-            return(
-                this.props.children
-            )
-        }else{
-            return null
-        }
     }
 }
 
@@ -1296,265 +1615,4 @@ export class Shimmer extends React.Component{
             }}></div>
         )
     }
-}
-
-
-export class AddEntry extends React.Component{
-    state = {
-        courseToAdd: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToAdd;
-        tempCourse[field] = value;
-        this.setState({
-            courseToAdd: tempCourse
-        })
-    }
-
-    uploadFile = async (file) => {
-        console.log(file);
-        const formData = new FormData();
-        formData.append("file", file.FileUrl);
-        
-        return await fetch("/api/File/Upload",
-            {
-                method: "POST",
-                body: formData,
-            }
-        ).then((res) => {
-            console.log(res);
-            return res.json();
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-    createCourse = async (courseToAdd) => {
-
-        return fetch(this.props.settings.api + "Create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToAdd),
-        }).then((res => {
-            return res.json();
-        })).catch((err) => {
-            console.log(err);
-        })
-    }
-
-    handleCourseCreation = async (e) => {
-        e.preventDefault();
-        var courseToAdd = this.state.courseToAdd;
-        var fileUploadFields = [];
-        
-        for(const field of Object.keys(this.props.fieldSettings)){
-            if (this.props.fieldSettings[field].type === "file") {
-                fileUploadFields.push(field);
-            }
-        }
-
-        for(const field of fileUploadFields){
-            try {
-                const res = await this.uploadFile(courseToAdd[field]);
-                if(res.success){
-                    courseToAdd[field] = res.data;
-                }
-            }catch(e){
-                this.props.requestError(e);
-            }
-        }
-        try {
-            const res = await this.createCourse(courseToAdd);
-            if(res.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(res.message);
-            }
-        }catch(e){
-            this.props.requestError(e);
-        }
-    }
-
-    render(){
-        return (
-            <div className="container addEntry">
-                <form className={"grid md:grid-cols-2 grid-cols-1 gap-4"} onSubmit={this.handleCourseCreation}>
-                    {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? "" : 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={this.props.fieldSettings[key].type}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            allowEmpty = {true}
-                            toolTip = {this.props.fieldSettings[key].toolTip}
-                            >
-                            </StdInput>)
-                    }
-                )}
-                <StdButton style={"md:col-span-2"} type={"submit"}>Submit</StdButton>
-                </form>
-                </div>
-        )
-    }
-}
-
-export class DeleteEntry extends React.Component{
-    state = {
-        courseToDelete: {},
-    }
-
-    onChange = (field, value) => {
-        var tempCourse = this.state.courseToDelete;
-        tempCourse[field] = value;
-        this.setState({
-            courseToDelete: tempCourse
-        })
-    }
-
-    deleteCourse = async (courseToDelete) => {
-        console.log(courseToDelete);
-        return fetch(this.props.settings.api + "Delete", {
-            method: "Delete",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(courseToDelete),
-        }).then((res => {
-            return res.json();
-        }));
-    }
-
-    handleCourseDeletion = async (e) => {
-        e.preventDefault();
-        await this.deleteCourse(this.state.courseToDelete).then((content) => {
-            if(content.success){
-                this.props.requestRefresh();
-            }else{
-                this.props.requestError(content.message);
-            }
-        })
-    }
-
-    render(){
-        return (
-            <div className="container flex justify-center">
-                <form className="w-96 flex flex-col gap-4" onSubmit={this.handleCourseDeletion}>
-                {Object.keys(this.props.fieldSettings).map(
-                    (key, index) => {
-                        return (this.props.fieldSettings[key].primaryKey? 
-                            <StdInput 
-                            label = {this.props.fieldSettings[key].displayLabel}
-                            type={"text"}
-                            enabled = {true}
-                            fieldLabel={key}
-                            onChange = {this.onChange}
-                            options={this.props.fieldSettings[key].options}
-                            dateFormat = {this.props.fieldSettings[key].dateFormat}
-                            >
-                            </StdInput> : "")
-                    }
-                )}
-                <StdButton style={"w-full"} type={"submit"}>Submit</StdButton>
-            
-                </form>
-            </div>
-        )
-    }
-}
-
-
-export class GenerateSpreadsheet extends React.Component{
-    state={
-        columns: [],
-        spreadsheetReady: false,
-    }
-    
-    componentDidMount(){
-        let columns = [];
-        for(var i = 0; i < Object.keys(this.props.fieldSettings).length; i++){
-            columns.push(
-                {
-                    label: Object.keys(this.props.fieldSettings)[i],
-                    key: Object.keys(this.props.fieldSettings)[i],
-                }
-            );
-        }
-        this.setState({
-            columns: columns
-        });
-    }
-
-    reOrderColumns = (index, direction) => {
-        var tempColumns = this.state.columns;
-        if(direction === "up"){
-            if(index > 0){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index - 1];
-                tempColumns[index - 1] = temp;
-            }
-        } else {
-            if(index < tempColumns.length - 1){
-                var temp = tempColumns[index];
-                tempColumns[index] = tempColumns[index + 1];
-                tempColumns[index + 1] = temp;
-            }
-        }
-        this.setState({
-            columns: tempColumns
-        });
-    }
-
-    generateSpreadsheet = () =>{
-        this.setState({
-            spreadsheetReady : false
-        })
-
-        // Fake loading time to show false sense of progress
-        setTimeout(() => {
-            this.setState({
-                spreadsheetReady : true
-            })}, 1000);
-    }
-
-    render(){
-        return (
-            <div className="container generate-spreadsheet">
-                <div className="column-order">
-                    {this.state.columns.map((column, index) => {
-                        return <div className="column">
-                            <div className="column-order-buttons">
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-up"></i>} onClick={() => this.reOrderColumns(index, "up")}></IconButton>
-                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-down"></i>} onClick={() => this.reOrderColumns(index, "down")}></IconButton>
-                            </div>
-                            <div className="column-name">{column.label}</div>
-                        </div>
-                    })}     
-                </div>
-                <div className="generate-actions">
-                    <StdButton onClick={() => this.generateSpreadsheet()}>
-                        Generate Spreadsheet
-                    </StdButton>
-
-                    {this.state.spreadsheetReady ?
-                    
-                    <CSVLink data={this.props.data} className={"forget-password"} headers={this.state.columns} filename={this.props.settings.title + ".csv"}>Download</CSVLink>
-                    :
-                    <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                    }    
-                </div>
-            </div>
-        )
-    }
-
-    
 }

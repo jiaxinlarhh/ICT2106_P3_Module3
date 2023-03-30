@@ -27,6 +27,7 @@ export default class VolunteerHome extends React.Component{
 
     getVolunteerWork = async () => {
         var loggedInVol = this.props.user.data;
+        console.log(loggedInVol.UserId);
         return fetch("/api/VolunteerWork/GetByVolunteerId/" + loggedInVol.UserId ,{
             method: "GET",
             headers:{
@@ -43,13 +44,14 @@ export default class VolunteerHome extends React.Component{
             this.state.loading?
             <Loading></Loading>
             :
-            <div className="container">
-                {this.props.user.data.ApprovalStatus == "Approved"?
-                
-                <VolunteerWorkList data={this.state.volunteerWork}></VolunteerWorkList>
-                :
-                <VolunteerPending></VolunteerPending>}
-            </div>
+            
+                <div className="container-fluid">
+                    {this.props.user.data.ApprovalStatus == "Approved"?
+                    
+                    <VolunteerWorkList data={this.state.volunteerWork}></VolunteerWorkList>
+                    :
+                    <VolunteerPending></VolunteerPending>}
+                </div>
         )
     }
 }
@@ -57,12 +59,22 @@ export default class VolunteerHome extends React.Component{
 class VolunteerPending extends React.Component{
     render(){
         return(
-            <div className="hero min-h-screen bg-base-200">
-                <div className="hero-content text-center">
-                    <div className="max-w-md">
-                    <h1 className="text-5xl font-bold">Hello there!</h1>
-                    <p className="py-6">Your volunteer application has been submitted and pending for approval!</p>
+            <div className="container-fluid volunteer-pending">
+                <div className="card-bg">
+                    <div className="header">
+                    Approval still pending
                     </div>
+                    <div className="content">
+                    
+                    <div className="pending-message">
+                        
+                        <i className="bi bi-emoji-smile-fill pending-message-icon"></i>
+                        <div className="pending-message-text">
+                            Thank you for your interest in volunteering with us. We are currently reviewing your application and will get back to you shortly.
+                        </div>
+                    </div>
+                    </div>
+
                 </div>
             </div>
         )
@@ -107,13 +119,50 @@ class VolunteerWorkList extends React.Component{
     render(){
         return(
             this.state.loading?
-            <progress className="progress w-full"></progress>
+            
+            <div className="container-fluid volunteer-work-list-container">
+                <div className="list-item header" style={{"--Columns": 4}}>
+                    {
+                        [1,2,3,4].map((item)=>{
+                            return(
+                                <div className="w-100">
+                                    <Shimmer type={"title"} noPadding={true}></Shimmer>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+                {
+                    [1,2,3].map((item)=>{
+                        return(
+                            <div className="list-item">
+                                <div className="col-md-12 col-12">
+                                    <Shimmer type={"content"} noPadding={true}></Shimmer>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
             :
-            <div className="flex flex-col gap-4">
-                <h1 className="text-2xl">Volunteer Work</h1>
-                {this.props.data.map((item,index)=>{
+            <div className="container-fluid volunteer-work-list-container">
+                <div className="list-item header" style={{"--Columns": (Object.keys(this.state.columnSettings).length - this.state.excludes.length)}}>
+                    {Object.keys(this.state.columnSettings).map((key)=>{
+                        if(this.state.excludes.includes(key)){
+                            return null;
+                        }else{
+                            
+                            return(
+                                <div className="header-cell">
+                                    {this.state.columnSettings[key].displayHeader}
+                                </div>
+                            )
+                        }
+                    })}
+                </div>
+                {this.props.data.map((item)=>{
                     return(
-                        <VolunteerWorkExpandibleRow key={index} data={item} excludes={this.state.excludes} columnSettings = {this.state.columnSettings} fieldSettings= {this.state.fieldSettings}></VolunteerWorkExpandibleRow>
+                        <VolunteerWorkExpandibleRow data={item} excludes={this.state.excludes} columnSettings = {this.state.columnSettings} fieldSettings= {this.state.fieldSettings}></VolunteerWorkExpandibleRow>
                     )
                 })}
             </div>
@@ -122,20 +171,29 @@ class VolunteerWorkList extends React.Component{
 }
 
 class VolunteerWorkExpandibleRow extends React.Component{
+    state={
+        expanded:false,
+    }
     render(){
-        const startDate = moment(this.props.data["ShiftStart"])
-        const endDate = moment(this.props.data["ShiftEnd"])
-        const projectName = this.props.fieldSettings["projectId"].options.find((item)=>{return item.value == this.props.data["projectId"]}).label
         return(
-            <div className="collapse collapse-arrow rounded-box border show" tabIndex={0}>
-                <input type="checkbox" className="peer"/> 
-                <div className="collapse-title flex flex-col">
-                    {/* {Object.keys(this.props.fieldSettings).map((key,index)=>{
+            
+            <div className="container-fluid p-0">
+                <div 
+                className={"list-item " + (this.state.expanded ? "active" : "")} 
+                style={{"--Columns": Object.keys(this.props.columnSettings).length - this.props.excludes.length}}
+                onClick={()=>{
+                    this.setState({
+                        expanded:!this.state.expanded,
+                    })
+                }}
+                >
+                    {Object.keys(this.props.fieldSettings).map((key)=>{
                         if(this.props.excludes.includes(key)){
                             return null;
                         }else{
+                            
                             return(
-                                <h1 key={index}>
+                                <div className="header-cell">
                                     {this.props.fieldSettings[key].type == "dropdown" &&  this.props.data[key] != null &&
                                         this.props.fieldSettings[key].options.find((item)=>{return item.value == this.props.data[key]}).label
                                     }
@@ -145,31 +203,12 @@ class VolunteerWorkExpandibleRow extends React.Component{
                                     {this.props.fieldSettings[key].type != "dropdown" && this.props.fieldSettings[key].type != "datetime" &&
                                         this.props.data[key]
                                     }
-                                </h1>
+                                </div>
                             )
                         }
-                    })} */}
-                    <div className="text-lg font-bold pb-4">
-                    Project: <span className="text-lg">{projectName}</span>
-                    </div>
-                    <div className="flex max-w-max">
-                        <div className="stats stats-horizontal shadow">
-                            <div className="stat">
-                                
-                                <div class="stat-title">Shift start</div>
-                                <div className="stat-value text-primary">{startDate.format("DD MMM")}</div>
-                                <div className="stat-desc font-bold text-lg">{startDate.format("hh:mm a")}</div>
-                            </div>
-                            <div className="stat">
-                                <div class="stat-title">Shift end</div>
-                                <div className="stat-value text-primary">{endDate.format("DD MMM")}</div>
-                                <div className="stat-desc font-bold text-lg">{endDate.format("hh:mm a")}</div>
-                            </div>
-                        </div>    
-                    </div>
+                    })}
                 </div>
-                <div className="collapse-content"> 
-                    <div class="divider"></div> 
+                <div className={"content " + (this.state.expanded ? "show": "")}>
                     <VolunteerWorkCard fieldSettings = {this.props.fieldSettings} data = {this.props.data}></VolunteerWorkCard>
                 </div>
             </div>
@@ -181,40 +220,42 @@ class VolunteerWorkCard extends React.Component{
 
     render(){
         return(
-            <div className="container flex md:flex-row flex-col items-center justify-center p-4 gap-4">
-                <div className="card w-96 bg-base-100 shadow-xl">
-                    <figure className="px-10 pt-10">
+            <div className="container-fluid">
+                <div className="volunteer-work-content row">
+                
+                <div className="card-bg col-md-4 col-12">
+                    <div className="body">
                         <QRCode value={this.props.data.VolunteerWorkId} style={{maxWidth:"100%", height:"auto", width:"100%"}}></QRCode>
-                    </figure>
-                    <div className="card-body items-center text-center">
-                        <h2 className="card-title">Work Id</h2>
-                        <p>{this.props.data.VolunteerWorkId}</p>
-                        <div className="card-actions">
+                        <div className="work-card-info">
+                            <span className="work-card-title">Work Id</span>
+                            <span className="work-card-line">{this.props.data.VolunteerWorkId}</span>
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col w-full">
-                    <h1 className="text-xl mx-3">
+                <div className="work-info col-md-8 col-12">
+                    <div className="work-info-header">
                         Work Info
-                    </h1>
-                    <div class="divider"></div> 
-                    <div className="grid grid-cols-1 md:grid-cols-2">
+                    </div>
+                    <div className="work-info-body">
+                        <div className="row g-3">
                             
-                        {Object.keys(this.props.fieldSettings).map((key,index)=>{
-                            return (
-                                <StdInput
-                                key={index}
+                        {Object.keys(this.props.fieldSettings).map((key)=>{
+                            return <div className="col-md-6 col-12">
+                            <StdInput
                                 editable={false}
                                 value={this.props.data[key]}
                                 type={this.props.fieldSettings[key].type}
                                 options={this.props.fieldSettings[key].options}
                                 label={this.props.fieldSettings[key].displayLabel}
-                                />
-                            )
+                            >
+                            </StdInput>
+                            </div>
                         })} 
                             
                         </div>
+                    </div>
                 </div>
+            </div>
             </div>
         )
     }

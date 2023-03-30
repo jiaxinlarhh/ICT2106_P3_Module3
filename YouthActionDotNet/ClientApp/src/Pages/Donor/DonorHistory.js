@@ -1,65 +1,116 @@
 import React from "react";
 import { Loading } from "../../Components/appCommon";
 import DatapageLayout from "../PageLayout";
-import { Card, CardBody, CardTitle, CardSubtitle, Table } from "reactstrap";
 
 export default class DonorHistory extends React.Component {
   state = {
+    content: null,
+    headers: [],
     loading: true,
-    donations: [],
-    monetary: [],
-    item: [],
+    settings: {},
+    error: "",
   };
 
-  componentDidMount = async () => {
-    await this.getDonations()
-      .then((response) => {
-        if (response.success) {
-          var monetaryDonation = [];
-          var itemDonation = [];
+  settings = {
+    title: "DonorHistory",
+    primaryColor: "#a6192e",
+    accentColor: "#94795d",
+    textColor: "#ffffff",
+    textColorInvert: "#606060",
+    api: "/api/Donations/",
+  };
 
-          console.log("Donations?: ", this.state.donations);
-          this.setState({
-            donations: response.data,
-            loading: false,
-          });
-          // for (val of this.state.donations) {
-          //   console.log(val);
-
-          // }
-
-          response.data.forEach((donation) => {
-            if (donation["DonationType"] === "Monetary") {
-              monetaryDonation.push(donation);
-            } else if (donation["DonationType"] === "Item") {
-              itemDonation.push(donation);
-            }
-          });
-
-          this.setState({
-            monetary: monetaryDonation,
-            item: itemDonation,
-          });
-
-          console.log("Monetary:", this.state.monetary);
-          console.log("Item:", this.state.item);
-        }
-      })
-      .catch((error) => {
-        this.setState({ error: error.message, loading: false });
+  async componentDidMount() {
+    await this.getContent().then((content) => {
+      console.log(content);
+      this.setState({
+        content: content,
       });
-  };
+    });
 
-  getDonations = async () => {
-    var loggedInVol = this.props.user.data;
-    console.log(loggedInVol.UserId);
-    return fetch("/api/DonorDashboard/GetByDonorId/" + loggedInVol.UserId, {
+    await this.getSettings().then((settings) => {
+      console.log(settings);
+      this.setState({
+        settings: settings,
+      });
+    });
+
+    this.setState({
+      loading: false,
+    });
+  }
+
+  getSettings = async () => {
+    // fetches http://...:5001/api/User/Settings
+    return fetch(this.settings.api + "Settings", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((response) => {
-      return response.json();
+    }).then((res) => {
+      console.log(res);
+      return res.json();
+    });
+  };
+
+  getContent = async () => {
+    return fetch(this.settings.api + "All", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      console.log(res);
+      //Res = {success: true, message: "Success", data: Array(3)}
+      return res.json();
+    });
+  };
+
+  update = async (data) => {
+    console.log(data);
+    return fetch(this.settings.api + "UpdateAndFetch/" + data.DonationsId, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then(async (res) => {
+      return res.json();
+    });
+  };
+
+  handleUpdate = async (data) => {
+    await this.update(data).then((content) => {
+      if (content.success) {
+        this.setState({
+          error: "",
+        });
+        return true;
+      } else {
+        this.setState({
+          error: content.message,
+        });
+        return false;
+      }
+    });
+  };
+
+  requestRefresh = async () => {
+    this.setState({
+      loading: true,
+    });
+    await this.getContent().then((content) => {
+      console.log(content);
+      this.setState({
+        content: content,
+        loading: false,
+      });
+    });
+  };
+
+  requestError = async (error) => {
+    this.setState({
+      error: error,
     });
   };
 
@@ -68,97 +119,91 @@ export default class DonorHistory extends React.Component {
       return <Loading></Loading>;
     } else {
       return (
+        // <DatapageLayout
+        //   settings={this.settings}
+        //   fieldSettings={this.state.settings.data.FieldSettings}
+        //   headers={this.state.settings.data.ColumnSettings}
+        //   data={this.state.content.data}
+        //   updateHandle={this.handleUpdate}
+        //   requestRefresh={this.requestRefresh}
+        //   error={this.state.error}
+        //   permissions={this.props.permissions}
+        //   requestError={this.requestError}
+        // ></DatapageLayout>
         <div className="col-md-12">
-          <div className="row">
-            <div className="tableHeader p-4">
-              <div className="tableHeaderActions ">
-                <div className="d-flex justify-content-start align-items-center">
-                  <div className="tableTitleContainer">
-                    <div
-                      className="tableTitlePulseAnimation-1"
-                      style={
-                        this.state.searchBarExtended
-                          ? { "--ScaleMultiplier": 0.75 }
-                          : { "--ScaleMultiplier": 2 }
-                      }
-                    ></div>
-                    <div
-                      className="tableTitlePulseAnimation-2"
-                      style={
-                        this.state.searchBarExtended
-                          ? { "--ScaleMultiplier": 0.75 }
-                          : { "--ScaleMultiplier": 2 }
-                      }
-                    ></div>
-                    <div
-                      className="tableTitlePulseAnimation-3"
-                      style={
-                        this.state.searchBarExtended
-                          ? { "--ScaleMultiplier": 0.75 }
-                          : { "--ScaleMultiplier": 2 }
-                      }
-                    ></div>
-                    <span className="tableTitle">Donation History</span>
-                  </div>
-                </div>
-              </div>
+        <div className="row">
+        <div className="tableHeader p-4">
+        <div className="tableHeaderActions ">
+        <div className="d-flex justify-content-start align-items-center">
+               
+            <div className="tableTitleContainer">
+            <div className="tableTitlePulseAnimation-1" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
             </div>
-          </div>
+            <div className="tableTitlePulseAnimation-2"  style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
+            </div>
+            <div className="tableTitlePulseAnimation-3" style={this.state.searchBarExtended ? { "--ScaleMultiplier": .75 } : { "--ScaleMultiplier": 2 }}>
+            </div>
+                <span className="tableTitle">Donation History</span>
+            </div>
 
-          <div>
-            <Card>
-              <CardBody>
-                <h2> Monetary Donation</h2>
-                <table className="table-responsive ">
-                  <thead>
-                    <tr>
-                      <th>Donation Type</th>
-                      <th>Donation Amount</th>
-                      <th>Donation Constraint</th>
-                      <th>Donation Date</th>
-                      <th>Project Id</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.monetary.map((donation) => (
-                      <tr key={donation.DonationsId}>
-                        <td>{donation.DonationType}</td>
-                        <td>{donation.DonationAmount}</td>
-                        <td>{donation.DonationConstraint}</td>
-                        <td>{donation.DonationDate}</td>
-                        <td>{donation.ProjectId}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <h2 className="pt-5">Item Donation</h2>
-                <table className="table-responsive ">
-                  <thead>
-                    <tr>
-                      <th>Donation Type</th>
-                      <th>Item Name</th>
-                      <th>Item Description</th>
-                      <th>Item Quantity</th>
-                      <th>Donation Date</th>
-                      <th>Project Id</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.item.map((donation) => (
-                      <tr key={donation.DonationsId}>
-                        <td>{donation.DonationType}</td>
-                        <td>{donation.ItemName}</td>
-                        <td>{donation.ItemDescription}</td>
-                        <td>{donation.ItemQuantity}</td>
-                        <td>{donation.DonationDate}</td>
-                        <td>{donation.ProjectId}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardBody>
-            </Card>
-          </div>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        <div className="row p-3">
+        <div className="col-md-12">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Donation Type</th>
+            <th scope="col">Donation Amount</th>
+            <th scope="col">Donation Date</th>
+            <th scope="col">Project Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Online</td>
+            <td>$2000</td>
+            <td>01/02/2023</td>
+            <td>Project Z</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Online</td>
+            <td>$2000</td>
+            <td>01/02/2023</td>
+            <td>Project Z</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Online</td>
+            <td>$2000</td>
+            <td>01/02/2023</td>
+            <td>Project Z</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Online</td>
+            <td>$2000</td>
+            <td>01/02/2023</td>
+            <td>Project Z</td>
+          </tr>
+          <tr>
+            <th scope="row">5</th>
+            <td>Online</td>
+            <td>$2000</td>
+            <td>01/02/2023</td>
+            <td>Project Z</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+        </div>
+
         </div>
       );
     }

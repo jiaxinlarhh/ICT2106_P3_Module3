@@ -14,10 +14,10 @@ namespace YouthActionDotNet.Models
         public UserSettings(){
             ColumnSettings = new Dictionary<string, ColumnHeader>();
             FieldSettings = new Dictionary<string, InputType>();
-            FieldSettings.Add("UserId", new InputType { type = "text", displayLabel = "User Id", editable = false, primaryKey = true });
+            FieldSettings.Add("UserId", new InputType { type = "number", displayLabel = "User Id", editable = false, primaryKey = true });
             FieldSettings.Add("username", new InputType { type = "text", displayLabel = "Username", editable = true, primaryKey = false });
-            FieldSettings.Add("Email", new InputType { type = "email", displayLabel = "Email", editable = true, primaryKey = false });
-            FieldSettings.Add("Password", new InputType { type = "password", displayLabel = "Password", editable = true, primaryKey = false });
+            FieldSettings.Add("Email", new InputType { type = "text", displayLabel = "Email", editable = true, primaryKey = false });
+            FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
             FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
                 new DropdownOption { value = "Admin", label = "Admin" },
                 new DropdownOption { value = "Employee", label = "Employee" },
@@ -62,28 +62,5 @@ namespace YouthActionDotNet.Models
         public string displayHeader { get; set; }
     }
 
-    public class Tag{
-        public string type { get; set; }
-        public string value { get; set; }
-    }
 
-    public class SearchRequest
-        {
-            public List<Tag> data { get; set; }
-            
-            public PageData pageData { get; set; }
-        }
-
-    public class PageData
-    {
-        public int page { get; set; }
-        public int pageSize { get; set; }
-    }
-
-    public class ReportQuery
-    {
-        public string startDate { get; set; }
-        public string endDate { get; set; }
-        public string projectId { get; set; }
-    }
 }

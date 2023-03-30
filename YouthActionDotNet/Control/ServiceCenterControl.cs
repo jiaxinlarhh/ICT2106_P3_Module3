@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,11 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Control
 {
-    public class ServiceCenterControl : IUserInterfaceCRUD<ServiceCenter>
+    public class ServiceCenterControl : IUserInterfaceCRUD<ServiceCenter>, IServiceCentreRepoIn<ServiceCenter>
     {
         private GenericRepositoryIn<ServiceCenter> ServiceCenterRepositoryIn;
-
-        private GenericRepositoryOut<ServiceCenter> ServiceCenterRepositoryOut;
+        private IServiceCentreRepoOut<ServiceCenter> ServiceCenterRepositoryOut;
+        //private GenericRepositoryOut<ServiceCenter> ServiceCenterRepositoryOut;
         private GenericRepositoryIn<User> UserRepositoryIn;
         private GenericRepositoryOut<User> UserRepositoryOut;
         JsonSerializerSettings settings = new JsonSerializerSettings
@@ -130,18 +131,6 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Deleted" });
         }
 
-        public async Task<ActionResult<string>> AllInPages(List<Tag> filter, Func<IQueryable<ServiceCenter>, IOrderedQueryable<ServiceCenter>> orderBy, int page, int pageSize)
-        {
-            var projects = await ServiceCenterRepositoryOut.GetAllInPagesAsync(
-                filter : filter, 
-                orderBy: orderBy, 
-                includeProperties: "",
-                page, 
-                pageSize);
-
-            return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Service Centers Successfully Retrieved" });
-        }
-
         public string Settings()
         {
             Settings settings = new Settings();
@@ -175,5 +164,40 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
 
+
+        public Task<bool> InsertAsync(ServiceCenter entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAsync(ServiceCenter entityToUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(object id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(ServiceCenter entityToDelete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ServiceCenter> GetAll(Expression<Func<ServiceCenter, bool>> filter = null, Func<IQueryable<ServiceCenter>, IOrderedQueryable<ServiceCenter>> orderBy = null, string includeProperties = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ServiceCenter> GetAllAsync(Expression<Func<ServiceCenter, bool>> filter = null, Func<IQueryable<ServiceCenter>, IOrderedQueryable<ServiceCenter>> orderBy = null, string includeProperties = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        public ServiceCenter GetByID(object id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
