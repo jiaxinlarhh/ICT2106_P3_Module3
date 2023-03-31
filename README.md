@@ -10,8 +10,7 @@ cd ..
 
 dotnet run
 
-# MODULE 3 TEAM 2
-# Module 3 Team 5
+# MODULE 3 TEAM 2 & Team 5
 
 Sample Regional Manager 
 username: testEmployee
